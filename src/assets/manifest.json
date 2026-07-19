@@ -1,0 +1,226 @@
+{
+ "generated": "2026-07-18T23:50:56.380Z",
+ "origin": "julesfolio.myportfolio.com",
+ "projects": {
+  "/next-real-estate": {
+   "folder": "next-real-estate",
+   "files": [
+    "next-real-estate/01.jpg",
+    "next-real-estate/02.jpg",
+    "next-real-estate/03.jpg",
+    "next-real-estate/04.jpg",
+    "next-real-estate/05.jpg",
+    "next-real-estate/06.jpg",
+    "next-real-estate/07.jpg",
+    "next-real-estate/08.jpg",
+    "next-real-estate/09.jpg",
+    "next-real-estate/10.jpg",
+    "next-real-estate/11.jpg",
+    "next-real-estate/12.jpg",
+    "next-real-estate/13.jpg",
+    "next-real-estate/14.png",
+    "next-real-estate/15.png",
+    "next-real-estate/16.png",
+    "next-real-estate/17.png"
+   ],
+   "youtubeIds": [],
+   "text": "About me Photography & Graphic Design Home Page Industrial Design Projects Videography Contact About me Photography & Graphic Design Home Page Industrial Design Projects Videography Contact Next Real Estate <div class=\"grid__image-wrapper\"> <img src=\"https://cdn.myportfolio.com/d72c4e12-ec8d-4219-9ed4-743077f22c79/6d0f58b5-d6e2-4f08-b9db-5b5366751c74_rw_3840.jpg?h=58b1a42230ba91c0ee0433a77fb37ce3\" srcset=\"https://cdn.myportfolio.com/d72c4e12-ec8d-4219-9ed4-743077f22c79/6d0f58b5-d6e2-4f08-b9db-5b"
+  },
+  "/next-branding": {
+   "folder": "next-branding",
+   "files": [
+    "next-branding/01.jpg",
+    "next-branding/02.jpg",
+    "next-branding/03.jpg",
+    "next-branding/04.jpg",
+    "next-branding/05.jpg",
+    "next-branding/06.jpg",
+    "next-branding/07.jpg",
+    "next-branding/08.jpg",
+    "next-branding/09.jpg",
+    "next-branding/10.jpg",
+    "next-branding/11.jpg",
+    "next-branding/12.jpg",
+    "next-branding/13.jpg",
+    "next-branding/14.jpg",
+    "next-branding/15.jpg",
+    "next-branding/16.png",
+    "next-branding/17.jpg",
+    "next-branding/18.jpg",
+    "next-branding/19.png",
+    "next-branding/20.jpg",
+    "next-branding/21.png"
+   ],
+   "youtubeIds": [],
+   "text": "About me Photography & Graphic Design Home Page Industrial Design Projects Videography Contact About me Photography & Graphic Design Home Page Industrial Design Projects Videography Contact Next - branding You may also like Walkie Talkie Redesign 2022 First Year Industrial Design Portfolio 2021 2021 Product Brand Extension 2022 Balco Furniture piece 2024 Inferno Fire Extinguisher 2022 Portable Tool Belt 2022 Eye Care - Capstone 2024 Winter Skateboard 2022 Olivera - Branding Project 2024 ↑Back to"
+  },
+  "/photo": {
+   "folder": "automotive",
+   "files": [
+    "automotive/01.png",
+    "automotive/02.jpg",
+    "automotive/03.jpg",
+    "automotive/04.jpg",
+    "automotive/05.jpg",
+    "automotive/06.jpg",
+    "automotive/07.jpg",
+    "automotive/08.png",
+    "automotive/09.jpg",
+    "automotive/10.jpg",
+    "automotive/11.jpg",
+    "automotive/12.jpg",
+    "automotive/13.jpg",
+    "automotive/14.jpg",
+    "automotive/15.jpg",
+    "automotive/16.jpg",
+    "automotive/17.jpg",
+    "automotive/18.jpg",
+    "automotive/19.jpg",
+    "automotive/20.jpg",
+    "automotive/21.jpg",
+    "automotive/22.jpg",
+    "automotive/23.jpg",
+    "automotive/24.jpg",
+    "automotive/25.png",
+    "automotive/26.jpg",
+    "automotive/27.jpg",
+    "automotive/28.jpg",
+    "automotive/29.jpg",
+    "automotive/30.jpg",
+    "automotive/31.jpg",
+    "automotive/32.jpg",
+    "automotive/33.jpg",
+    "automotive/34.png",
+    "automotive/35.png",
+    "automotive/36.jpg",
+    "automotive/37.jpg",
+    "automotive/38.jpg",
+    "automotive/39.jpg",
+    "automotive/40.jpg"
+   ],
+   "youtubeIds": [],
+   "text": "About me Photography & Graphic Design Home Page Industrial Design Projects Videography Contact About me Photography & Graphic Design Home Page Industrial Design Projects Videography Contact Automotive Photography <div class=\"grid__image-wrapper\"> <img src=\"https://cdn.myportfolio.com/d72c4e12-ec8d-4219-9ed4-743077f22c79/b36f81bf-76d2-430f-abef-1eaa2418b8f0_rw_1920.png?h=33a725dea7091174f9fe28d8ac910c9e\" srcset=\"https://cdn.myportfolio.com/d72c4e12-ec8d-4219-9ed4-743077f22c79/b36f81bf-76d2-430f-a"
+  },
+  "/home-page": {
+   "folder": "home",
+   "files": [],
+   "youtubeIds": [],
+   "text": "Hi I'm Julian. Carleton University industrial design alumni 2024. This portfolio is a display of my freelance photography, Industrial design projects, and graphic design work. Industrial design portfolio Photography - Graphic design Videography // fix for Safari's back/forward cache window.onpageshow = function(e) { if (e.persisted) { window.location.reload(); } }; var __config__ = {\"page_id\":\"p61788472c26ccf0e9d2843680c9cac51497266f99423085c37cef\",\"theme\":{\"name\":\"marta\\/ludwig\"},\"pageTransitio"
+  }
+ },
+ "galleries": {
+  "/industrial-design-projects-1": [
+   {
+    "href": "/next-real-estate",
+    "title": "Next Real Estate 2025",
+    "cover": "covers/next-real-estate.jpg"
+   },
+   {
+    "href": "/photo",
+    "title": "Automotive Photography 2024",
+    "cover": "covers/photo.png"
+   },
+   {
+    "href": "/my-hookah",
+    "title": "MyHookah.ca Content Creation 2021",
+    "cover": "covers/my-hookah.jpg"
+   },
+   {
+    "href": "/vandal-gaming-mouse-client",
+    "title": "Vandal Gaming Mouse 2022",
+    "cover": "covers/vandal-gaming-mouse-client.png"
+   },
+   {
+    "href": "/business-portrait",
+    "title": "Business Portrait 2023",
+    "cover": "covers/business-portrait.png"
+   },
+   {
+    "href": "/commercial-photography-not-all-work-contracted",
+    "title": "Commercial Photography 2022",
+    "cover": "covers/commercial-photography-not-all-work-contracted.png"
+   },
+   {
+    "href": "/graphic-design-posters",
+    "title": "Graphic Design Posters 2021",
+    "cover": "covers/graphic-design-posters.jpg"
+   },
+   {
+    "href": "/client-work",
+    "title": "Turbo Wax Content Creation 2021",
+    "cover": "covers/client-work.jpg"
+   },
+   {
+    "href": "/personal-photographs",
+    "title": "Personal Photographs 2023",
+    "cover": "covers/personal-photographs.jpg"
+   }
+  ],
+  "/work": [
+   {
+    "href": "/eye-care-capstone",
+    "title": "Eye Care - Capstone 2024",
+    "cover": "covers/eye-care-capstone.png"
+   },
+   {
+    "href": "/furniture",
+    "title": "Balco Furniture piece 2024",
+    "cover": "covers/furniture.png"
+   },
+   {
+    "href": "/inferno-fire-extinguisher",
+    "title": "Inferno Fire Extinguisher 2022",
+    "cover": "covers/inferno-fire-extinguisher.jpg"
+   },
+   {
+    "href": "/product-brand-extension",
+    "title": "Product Brand Extension 2022",
+    "cover": "covers/product-brand-extension.jpg"
+   },
+   {
+    "href": "/olivera",
+    "title": "Olivera - Branding Project 2024",
+    "cover": "covers/olivera.png"
+   },
+   {
+    "href": "/next-branding",
+    "title": "Next - branding 2024",
+    "cover": "covers/next-branding.jpg"
+   },
+   {
+    "href": "/walkie-talkie-redesign",
+    "title": "Walkie Talkie Redesign 2022",
+    "cover": "covers/walkie-talkie-redesign.jpg"
+   },
+   {
+    "href": "/portable-tool-belt",
+    "title": "Portable Tool Belt 2022",
+    "cover": "covers/portable-tool-belt.jpg"
+   },
+   {
+    "href": "/winter-skateboard",
+    "title": "Winter Skateboard 2022",
+    "cover": "covers/winter-skateboard.jpg"
+   },
+   {
+    "href": "/industrial-design-projects",
+    "title": "First Year Industrial Design Portfolio 2021 2021",
+    "cover": "covers/industrial-design-projects.jpg"
+   }
+  ],
+  "/videography": [
+   {
+    "href": "/videography-1",
+    "title": "Long Form Video 2024",
+    "cover": "covers/videography-1.png"
+   },
+   {
+    "href": "/short-form-content",
+    "title": "Short Form Content 2026",
+    "cover": "covers/short-form-content.png"
+   }
+  ]
+ },
+ "videos": {},
+ "aboutText": "About me Photography & Graphic Design Home Page Industrial Design Projects Videography Contact About me Photography & Graphic Design Home Page Industrial Design Projects Videography Contact About Me 2022 ↑Back to Top Powered by Adobe Portfolio // fix for Safari's back/forward cache window.onpageshow = function(e) { if (e.persisted) { window.location.reload(); } }; var __config__ = {\"page_id\":\"p6334b486cacd9a79e85c0247fc5508e5c96540f1d6315a8f48398\",\"theme\":{\"name\":\"marta\\/ludwig\"},\"pageTransition\":true,\"linkTransition\":true,\"disableDownload\":true,\"localizedValidationMessages\":{\"required\":\"This field is required\",\"Email\":\"This field must be a valid email address\"},\"lightbox\":{\"enabled\":true,\"color\":{\"opacity\":0.94,\"hex\":\"#fff\"}},\"cookie_banner\":{\"enabled\":false}};"
+}
