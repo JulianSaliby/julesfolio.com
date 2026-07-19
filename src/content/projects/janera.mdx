@@ -1,0 +1,45 @@
+---
+title: Janera
+disciplines: [videography, graphic-design]
+year: 2026
+weight: featured
+client: Janera
+role: [Concept & Story, Storyboard, AI Generation, Edit & Sound]
+cover: covers/janera
+summary: Two cinematic, scientific Google-style ads for a peptide company — concept to finished spot, AI-generated and hand-finished.
+featured_home: true
+home_order: 3
+---
+
+import ProjectIntro from '../../components/blocks/ProjectIntro.astro';
+import VideoFeature from '../../components/blocks/VideoFeature.astro';
+import MediaSideBySide from '../../components/blocks/MediaSideBySide.astro';
+import ToolStack from '../../components/blocks/ToolStack.astro';
+import Breather from '../../components/blocks/Breather.astro';
+
+<ProjectIntro title="Janera" meta="Commercial · 2026" roles={['Concept & Story', 'Storyboard', 'AI Generation', 'Edit & Sound']}>
+  Two Google-style ads for a peptide company — one horizontal, one vertical —
+  with a cinematic, scientific look. Every frame was generated, but nothing
+  was left to chance: the concept, storyboard, shot direction, and final edit
+  are all deliberate, hand-made decisions.
+</ProjectIntro>
+
+<VideoFeature src="/media/janera/janera-horizontal.mp4" poster="/media/janera/poster-horizontal.jpg" title="Janera — horizontal ad" caption="The horizontal spot" />
+
+<Breather quote="AI generates the footage. The craft is everything around it." />
+
+<MediaSideBySide image="janera/storyboard" alt="Storyboard for the vertical Janera ad — AI-generated frames arranged shot by shot" title="From story to storyboard">
+  The concept and script started on paper. Image-generation models were then
+  steered — shot by shot, with an eye trained by years of product
+  photography — until each frame matched the vision, and the approved stills
+  became the storyboard for the full spot.
+</MediaSideBySide>
+
+<VideoFeature ratio="9/16" src="/media/janera/janera-vertical.mp4" poster="/media/janera/poster-vertical.jpg" title="Janera — vertical ad" caption="The vertical spot — built from the storyboard above" />
+
+<ToolStack label="Process & tools" tools={[
+  { abbr: 'Ig', name: 'Image generation', note: 'Storyboard frames & assets' },
+  { abbr: 'Hf', name: 'Higgsfield AI', note: 'Video shot generation' },
+  { abbr: 'Sd', name: 'Seedance 2.0', note: 'Video shot generation' },
+  { abbr: 'Pr', name: 'Adobe Premiere Pro', note: 'Edit · speed ramps · text · SFX · music sync', color: '#b1b1f5' },
+]} />

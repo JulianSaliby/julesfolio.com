@@ -1,0 +1,74 @@
+---
+/**
+ * SpreadBook — presents a page-per-image booklet as two-page spreads,
+ * the way it was designed to be read: cover alone, then left/right pairs.
+ * Falls back to a single column on small screens. Optional PDF download.
+ */
+import { Image } from 'astro:assets';
+import { assetsIn } from '../../lib/assets';
+
+interface Props {
+  dir: string;      // src/assets/<dir> containing p-01, p-02, … in order
+  pdf?: string;     // public/ path to the full PDF
+  caption?: string;
+  alt?: string;
+}
+const { dir, pdf, caption, alt = 'Process book page' } = Astro.props;
+
+const pages = assetsIn(dir);
+const cover = pages[0];
+const backCoverOdd = (pages.length - 1) % 2 === 1; // leftover single last page
+const inner = pages.slice(1, backCoverOdd ? pages.length - 1 : pages.length);
+const spreads: (typeof pages)[] = [];
+for (let i = 0; i < inner.length; i += 2) spreads.push(inner.slice(i, i + 2));
+const backCover = backCoverOdd ? pages[pages.length - 1] : undefined;
+---
+
+<section class="spread-book section">
+  {caption && <p class="meta container" style="margin-bottom:1.5rem">{caption}</p>}
+
+  <div class="book container">
+    {cover && (
+      <figure class="spread solo reveal">
+        <Image src={cover} alt={`${alt} — cover`} widths={[720, 1200]} sizes="(max-width: 820px) 92vw, 46vw" loading="lazy" />
+      </figure>
+    )}
+    {spreads.map((pair, i) => (
+      <figure class="spread pair reveal">
+        {pair.map((img, j) => (
+          <Image src={img} alt={`${alt} — spread ${i + 1}, ${j === 0 ? 'left' : 'right'}`} widths={[720, 1100]} sizes="(max-width: 820px) 92vw, 46vw" loading="lazy" />
+        ))}
+      </figure>
+    ))}
+    {backCover && (
+      <figure class="spread solo reveal">
+        <Image src={backCover} alt={`${alt} — back cover`} widths={[720, 1200]} sizes="(max-width: 820px) 92vw, 46vw" loading="lazy" />
+      </figure>
+    )}
+  </div>
+
+  {pdf && (
+    <p class="container" style="margin-top:1.5rem; text-align:center">
+      <a href={pdf} target="_blank" rel="noopener" class="pdf-link meta">Download the full book (PDF) ↗</a>
+    </p>
+  )}
+</section>
+
+<style>
+  .book { display: grid; gap: clamp(1rem, 2.5vh, 1.75rem); max-width: 1200px; }
+  .spread { display: grid; gap: 4px; }
+  .spread.pair { grid-template-columns: 1fr 1fr; }
+  .spread.solo { max-width: 50%; margin-inline: auto; }
+  .spread :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: var(--bg-elevated);
+    box-shadow: 0 1px 0 var(--hairline);
+  }
+  .pdf-link { color: var(--accent); }
+  @media (max-width: 680px) {
+    .spread.pair { grid-template-columns: 1fr; }
+    .spread.solo { max-width: 100%; }
+  }
+</style>

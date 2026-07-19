@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import { asset, assetsIn } from '../../lib/assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  dir?: string;      // take every image in this asset dir…
+  images?: string[]; // …or an explicit ordered list
+  caption?: string;
+}
+const { dir, images, caption } = Astro.props;
+const list: ImageMetadata[] = dir ? assetsIn(dir) : (images ?? []).map(asset);
+---
+
+<section class="filmstrip-wrap section reveal">
+  <div class="filmstrip" tabindex="0" role="region" aria-label={caption ?? 'Image gallery'}>
+    {list.map((img) => (
+      <figure><Image src={img} alt="" widths={[600, 1200]} sizes="70vh" /></figure>
+    ))}
+  </div>
+  {caption && <p class="meta container filmstrip-caption">{caption}</p>}
+</section>
+
+<style>
+  .filmstrip {
+    display: flex;
+    gap: clamp(0.75rem, 1.5vw, 1.25rem);
+    overflow-x: auto;
+    padding-inline: var(--gutter);
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .filmstrip::-webkit-scrollbar { display: none; }
+  .filmstrip figure { flex: 0 0 auto; scroll-snap-align: start; }
+  .filmstrip :global(img) { height: min(64vh, 560px); width: auto; }
+  .filmstrip-caption { margin-top: 1rem; }
+</style>

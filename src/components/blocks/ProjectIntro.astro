@@ -1,0 +1,35 @@
+---
+interface Props {
+  title: string;
+  meta?: string;
+  roles?: string[];
+}
+const { title, meta, roles = [] } = Astro.props;
+---
+
+<header class="container project-intro">
+  <div class="intro-grid">
+    <div>
+      {meta && <p class="meta">{meta}</p>}
+      <h1 class="project-title">{title}</h1>
+    </div>
+    <div class="intro-side">
+      {roles.length > 0 && (
+        <ul class="roles">
+          {roles.map((r) => <li class="meta">{r}</li>)}
+        </ul>
+      )}
+      <div class="intro-body"><slot /></div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .project-intro { padding-block: clamp(3rem, 8vh, 6rem) clamp(2rem, 5vh, 3.5rem); }
+  .intro-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: end; }
+  .project-title { font-size: var(--text-2xl); margin-top: 0.6rem; }
+  .roles { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; margin-bottom: 1rem; }
+  .intro-body { color: var(--text-secondary); }
+  .intro-body :global(p + p) { margin-top: 0.8em; }
+  @media (max-width: 820px) { .intro-grid { grid-template-columns: 1fr; align-items: start; } }
+</style>

@@ -1,0 +1,55 @@
+---
+interface Props {
+  youtube?: string[]; // vertical/Shorts IDs
+  srcs?: string[];    // self-hosted 9:16 mp4s (public/)
+  caption?: string;
+}
+const { youtube = [], srcs = [], caption } = Astro.props;
+---
+
+<section class="container reels section reveal">
+  <div class="reel-row">
+    {youtube.map((id) => (
+      <div class="reel">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1`}
+          title="Vertical video"
+          loading="lazy"
+          allow="accelerometer; autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    ))}
+    {srcs.map((s) => (
+      <div class="reel">
+        <video src={s} muted playsinline loop preload="metadata" controls></video>
+      </div>
+    ))}
+  </div>
+  {caption && <p class="meta" style="margin-top:1rem">{caption}</p>}
+</section>
+
+<style>
+  .reel-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    max-width: 1000px;
+    margin-inline: auto;
+  }
+  .reel { position: relative; aspect-ratio: 9 / 16; background: var(--bg-elevated); overflow: hidden; }
+  .reel iframe, .reel video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; }
+</style>
+
+<script>
+  // Autoplay self-hosted reels while on screen, pause off screen
+  const io = new IntersectionObserver(
+    (es) => es.forEach((e) => {
+      const v = e.target as HTMLVideoElement;
+      if (e.isIntersecting) v.play().catch(() => {});
+      else v.pause();
+    }),
+    { threshold: 0.5 }
+  );
+  document.querySelectorAll('.reel video').forEach((v) => io.observe(v));
+</script>

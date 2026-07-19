@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Contact">
+  <section class="container-text contact">
+    <p class="meta">Contact</p>
+    <h1>Let's make something.</h1>
+    <p class="contact-lede">
+      Available for photography, video, branding, and product design work.
+    </p>
+    <ul class="channels">
+      <li>
+        <span class="meta">Email</span>
+        <a href="mailto:julesfolio.js@gmail.com">julesfolio.js@gmail.com</a>
+      </li>
+      <li>
+        <span class="meta">LinkedIn</span>
+        <a href="https://www.linkedin.com/in/julian-saliby-126705185/" target="_blank" rel="noopener">julian-saliby</a>
+      </li>
+      <li>
+        <span class="meta">YouTube</span>
+        <a href="https://www.youtube.com/channel/UC9ECITEoYtaVFVXU8-mIJEw" target="_blank" rel="noopener">Julian Saliby</a>
+      </li>
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .contact { padding-top: 9rem; min-height: 55vh; }
+  .contact h1 { font-size: var(--text-2xl); margin-block: 0.5rem 1rem; }
+  .contact-lede { color: var(--text-secondary); }
+  .channels { list-style: none; margin-top: 3rem; border-top: 1px solid var(--hairline); }
+  .channels li { display: grid; grid-template-columns: 8rem 1fr; gap: 1rem; padding-block: 1.1rem; border-bottom: 1px solid var(--hairline); }
+  .channels a { color: var(--text); font-weight: 500; }
+  .channels a:hover { color: var(--accent); }
+  @media (max-width: 680px) { .channels li { grid-template-columns: 1fr; gap: 0.2rem; } }
+</style>

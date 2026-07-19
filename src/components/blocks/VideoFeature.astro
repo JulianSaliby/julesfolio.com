@@ -1,0 +1,55 @@
+---
+interface Props {
+  youtube?: string; // YouTube video ID
+  ccv?: string;     // Adobe Creative Cloud Video ID (legacy Adobe Portfolio hosting)
+  src?: string;     // self-hosted mp4 path (public/)
+  poster?: string;
+  caption?: string;
+  title?: string;
+  ratio?: '16/9' | '9/16' | '1/1'; // vertical + square render narrower, centered
+}
+const { youtube, ccv, src, poster, caption, title = 'Video', ratio = '16/9' } = Astro.props;
+const embedSrc = youtube
+  ? `https://www.youtube-nocookie.com/embed/${youtube}?rel=0&modestbranding=1`
+  : ccv
+    ? `https://www-ccv.adobe.io/v1/player/ccv/${ccv}/embed`
+    : undefined;
+const ratioClass = ratio === '9/16' ? 'r-vertical' : ratio === '1/1' ? 'r-square' : 'r-wide';
+---
+
+<section class="container video-feature section reveal">
+  <div class:list={['frame', ratioClass]}>
+    {embedSrc ? (
+      <iframe
+        src={embedSrc}
+        title={title}
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    ) : (
+      <video controls preload="metadata" poster={poster} src={src}></video>
+    )}
+  </div>
+  {caption && <p class:list={['meta', 'video-caption', ratioClass !== 'r-wide' && 'caption-center']}>{caption}</p>}
+</section>
+
+<style>
+  .frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--bg-elevated);
+    overflow: hidden;
+  }
+  .frame.r-vertical { aspect-ratio: 9 / 16; max-width: min(420px, 88vw); margin-inline: auto; }
+  .frame.r-square { aspect-ratio: 1 / 1; max-width: min(620px, 92vw); margin-inline: auto; }
+  .frame iframe, .frame video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .video-caption { margin-top: 1rem; }
+  .caption-center { text-align: center; }
+</style>

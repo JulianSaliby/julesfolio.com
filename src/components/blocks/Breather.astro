@@ -1,0 +1,19 @@
+---
+interface Props { quote?: string; attribution?: string; }
+const { quote, attribution } = Astro.props;
+---
+
+<section class="breather section">
+  {quote && (
+    <blockquote class="container-text reveal">
+      <p class="quote">{quote}</p>
+      {attribution && <cite class="meta">{attribution}</cite>}
+    </blockquote>
+  )}
+</section>
+
+<style>
+  .breather { padding-block: clamp(2rem, 8vh, 5rem); text-align: center; }
+  .quote { font-size: var(--text-lg); font-weight: 500; letter-spacing: -0.01em; line-height: 1.4; }
+  cite { display: block; margin-top: 1rem; font-style: normal; }
+</style>

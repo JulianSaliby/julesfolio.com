@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About">
+  <article class="container-text about">
+    <p class="meta">About</p>
+    <h1>Julian Saliby</h1>
+    <div class="bio">
+      <p>
+        I'm an industrial designer by training — Carleton University, class of
+        2024 — and a photographer, videographer, and brand designer by practice.
+      </p>
+      <p>
+        For the past two years I've designed at Parallel, an AI-native parking
+        operations startup I co-founded, while running a freelance practice
+        spanning automotive and architectural photography, cinematic video,
+        and brand identity. My favorite projects are the ones that need all of
+        it at once: Next Real Estate came to me for photography and left with
+        a film, a brand, a poster series, and signage.
+      </p>
+      <p>
+        Industrial design taught me how objects work; photography taught me how
+        they should look; video taught me how they should feel. I bring the
+        three to every brief.
+      </p>
+    </div>
+    <ul class="facts">
+      <li><span class="meta">Education</span> B.I.D., Industrial Design — Carleton University, 2024</li>
+      <li><span class="meta">Disciplines</span> Photography · Video · Branding · Industrial Design</li>
+      <li><span class="meta">Select clients</span> Next Real Estate · Turbo Wax · Vandal · MyHookah.ca</li>
+      <li><span class="meta">Currently</span> Co-founder &amp; COO, Parallel</li>
+    </ul>
+    <a href="/contact" class="about-cta">Work with me →</a>
+  </article>
+</Base>
+
+<style>
+  .about { padding-top: 9rem; }
+  .about h1 { font-size: var(--text-2xl); margin-block: 0.5rem 2rem; }
+  .bio p + p { margin-top: 1em; }
+  .bio { color: var(--text-secondary); }
+  .bio p:first-child { color: var(--text); font-size: var(--text-lg); line-height: 1.45; }
+  .facts { list-style: none; margin-top: 3rem; border-top: 1px solid var(--hairline); }
+  .facts li { display: grid; grid-template-columns: 10rem 1fr; gap: 1rem; padding-block: 1rem; border-bottom: 1px solid var(--hairline); }
+  .about-cta { display: inline-block; margin-top: 2.5rem; font-weight: 600; color: var(--accent); }
+  @media (max-width: 680px) { .facts li { grid-template-columns: 1fr; gap: 0.25rem; } }
+</style>

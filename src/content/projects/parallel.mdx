@@ -1,0 +1,46 @@
+---
+title: Parallel
+disciplines: [graphic-design, videography]
+year: 2026
+weight: featured
+client: Parallel
+role: [Brand Identity, Direction & Storyboard, Edit & Sound, Tutorial Production]
+cover: covers/parallel
+summary: Two years of design for a parking-software company — brand identity, a flagship animated demo film, and a tutorial series.
+featured_home: true
+home_order: 4
+---
+
+import ProjectIntro from '../../components/blocks/ProjectIntro.astro';
+import VideoFeature from '../../components/blocks/VideoFeature.astro';
+import VideoGrid from '../../components/blocks/VideoGrid.astro';
+import BrandBoard from '../../components/blocks/BrandBoard.astro';
+import ToolStack from '../../components/blocks/ToolStack.astro';
+import Breather from '../../components/blocks/Breather.astro';
+
+<ProjectIntro title="Parallel" meta="Brand · Product · Video · 2024–26" roles={['Brand Identity', 'Direction & Storyboard', 'Edit & Sound', 'Tutorial Production']}>
+  Two years designing for Parallel, a parking-software company — from the
+  brand and logo up. The flagship piece is the product demo film: storyboarded
+  and directed by me, with animated scenes built in partnership with a motion
+  designer, and everything else — screen capture, edit, transitions, sound —
+  done in-house.
+</ProjectIntro>
+
+<VideoFeature src="/media/parallel/demo.mp4" poster="/media/parallel/poster-demo.jpg" title="Parallel — product demo film" caption="The demo film — direction, storyboard, screen capture, edit & sound design by Julian; animated scenes in partnership with a motion designer; professional voice-over" />
+
+<Breather quote="No real cursor was recorded — an animated mouse carries every scene, live UI and animation alike, so the film reads as one continuous world." />
+
+<BrandBoard dir="parallel-brand" caption="Parallel brand guidelines — identity and logo created with the co-founder" />
+
+<VideoGrid caption="Software tutorials — screen-recorded, set on a clean stage, voiced with an ElevenLabs model trained on my own recordings" clips={[
+  { src: '/media/parallel/tutorial-analytics.mp4', title: 'Analytics Dashboard' },
+  { src: '/media/parallel/tutorial-plate-registry.mp4', title: 'Plate Registry' },
+  { src: '/media/parallel/tutorial-advanced-settings.mp4', title: 'Advanced Settings' },
+]} />
+
+<ToolStack label="Process & tools" tools={[
+  { abbr: 'Pr', name: 'Adobe Premiere Pro', note: 'Demo film & tutorial edits · SFX', color: '#b1b1f5' },
+  { abbr: '11', icon: 'elevenlabs', name: 'ElevenLabs', note: 'AI voice for the tutorial series' },
+  { abbr: 'Sb', name: 'Storyboard & shot schedule', note: 'Scene direction with the animator' },
+  { abbr: 'Vo', name: 'Voice actress', note: 'Demo film script' },
+]} />

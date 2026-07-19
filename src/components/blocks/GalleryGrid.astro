@@ -1,0 +1,26 @@
+---
+import { Image } from 'astro:assets';
+import { asset, assetsIn } from '../../lib/assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  dir?: string;
+  images?: string[];
+  columns?: 2 | 3;
+}
+const { dir, images, columns = 3 } = Astro.props;
+const list: ImageMetadata[] = dir ? assetsIn(dir) : (images ?? []).map(asset);
+---
+
+<section class:list={['container', 'masonry', `mcols-${columns}`, 'section', 'reveal']}>
+  {list.map((img) => (
+    <figure><Image src={img} alt="" widths={[600, 1000]} sizes={`(max-width: 680px) 100vw, ${Math.round(100 / columns)}vw`} loading="lazy" /></figure>
+  ))}
+</section>
+
+<style>
+  .masonry { columns: 3; column-gap: clamp(0.75rem, 1.5vw, 1.25rem); }
+  .mcols-2 { columns: 2; }
+  .masonry figure { break-inside: avoid; margin-bottom: clamp(0.75rem, 1.5vw, 1.25rem); }
+  @media (max-width: 680px) { .masonry, .mcols-2 { columns: 1; } }
+</style>

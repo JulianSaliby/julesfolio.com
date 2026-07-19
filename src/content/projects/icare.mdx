@@ -1,0 +1,38 @@
+---
+title: iCare — Eye-Care Capstone
+disciplines: [industrial-design]
+year: 2024
+weight: featured
+role: [Industrial Design, CAD, User Testing, Design Communication]
+cover: covers/eye-care-capstone
+summary: Carleton ID capstone — a full product-design process, documented in a page-by-page process book.
+featured_home: true
+home_order: 2
+---
+
+import ProjectIntro from '../../components/blocks/ProjectIntro.astro';
+import SpreadBook from '../../components/blocks/SpreadBook.astro';
+import ToolStack from '../../components/blocks/ToolStack.astro';
+import Breather from '../../components/blocks/Breather.astro';
+
+<ProjectIntro title="iCare" meta="Capstone · Carleton Industrial Design · 2024" roles={['Industrial Design', 'CAD', 'User Testing', 'Design Communication']}>
+  The capstone of my industrial design degree — and the most tool-intensive
+  project in this portfolio. The whole journey is documented in the process
+  book below: research, sketching, concepting, CAD, user testing, and the
+  final design, laid out to be read as two-page spreads.
+</ProjectIntro>
+
+<SpreadBook dir="icare-book" pdf="/docs/icare-process-book.pdf" alt="iCare process book" caption="The process book — read left page, right page" />
+
+<Breather quote="Every tool in the kit, in one project." />
+
+<ToolStack label="Process & tools" tools={[
+  { abbr: 'S3', name: 'Shapr3D', note: 'Concept CAD' },
+  { abbr: 'SW', name: 'SolidWorks', note: 'Engineering CAD' },
+  { abbr: 'Pc', name: 'Procreate', note: 'Sketching' },
+  { abbr: 'Ps', name: 'Adobe Photoshop', note: 'Design & imagery', color: '#7cc4f5' },
+  { abbr: 'Ai', name: 'Adobe Illustrator', note: 'Layout & graphics', color: '#f5b57c' },
+  { abbr: 'Pr', name: 'Adobe Premiere Pro', note: 'Capstone film', color: '#b1b1f5' },
+  { abbr: 'AI', name: 'Early AI tools', note: 'Concept exploration' },
+  { abbr: 'Ut', name: 'User testing', note: 'Iterative validation' },
+]} />

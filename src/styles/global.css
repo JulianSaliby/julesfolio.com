@@ -1,0 +1,96 @@
+/* ============================================================
+   Julian Saliby — Portfolio design system
+   Dark, Apple-refined. Content > chrome. One neutral family.
+   ============================================================ */
+
+:root {
+  /* Palette — near-monochrome; imagery carries color */
+  --bg: #0a0a0b;
+  --bg-elevated: #141416;
+  --bg-subtle: #1d1d1f;
+  --text: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --text-tertiary: #6e6e73;
+  --hairline: rgba(255, 255, 255, 0.09);
+  --accent: #9bb0c9; /* restrained steel — interactive states only */
+
+  /* Type — single neutral family, SF on Apple hardware */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "SF Pro Text", Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.375rem;
+  --text-xl: 1.75rem;
+  --text-2xl: clamp(2rem, 4vw, 3rem);
+  --text-hero: clamp(2.5rem, 6vw, 4.5rem);
+
+  /* Layout */
+  --max-media: 1440px;
+  --max-text: 720px;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --section-gap: clamp(4rem, 10vh, 8rem);
+
+  /* Motion */
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --dur: 0.6s;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  background: var(--bg);
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img, video { display: block; max-width: 100%; height: auto; }
+
+a { color: inherit; text-decoration: none; transition: color 0.25s var(--ease), opacity 0.25s var(--ease); }
+a:hover { color: var(--accent); }
+
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+
+::selection { background: rgba(155, 176, 201, 0.3); }
+
+/* ---- Utility primitives ---- */
+
+.container { max-width: var(--max-media); margin-inline: auto; padding-inline: var(--gutter); }
+.container-text { max-width: var(--max-text); margin-inline: auto; padding-inline: var(--gutter); }
+
+.meta {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.section { margin-block: var(--section-gap); }
+
+/* ---- Scroll reveal (reduced-motion safe) ---- */
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.reveal.is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---- Focus visibility ---- */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }

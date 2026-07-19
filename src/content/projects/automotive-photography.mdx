@@ -1,0 +1,33 @@
+---
+title: Automotive Photography
+disciplines: [photography, videography]
+year: 2024
+weight: hero
+role: [Photography, Retouching]
+cover: covers/photo
+summary: Automotive photography — natural light, clean compositions, sound-designed films to match.
+featured_home: false
+---
+
+import HeroFullBleed from '../../components/blocks/HeroFullBleed.astro';
+import ProjectIntro from '../../components/blocks/ProjectIntro.astro';
+import HorizontalGallery from '../../components/blocks/HorizontalGallery.astro';
+import GalleryGrid from '../../components/blocks/GalleryGrid.astro';
+import ToolStack from '../../components/blocks/ToolStack.astro';
+
+<HeroFullBleed image="automotive/03" title="Automotive" meta="Photography · 2024" alt="Black BMW M3 at sunset in front of a barn" height="full" />
+
+<ProjectIntro title="Cars, treated like architecture." meta="Ongoing · 2024" roles={['Photography', 'Retouching']}>
+  Clean compositions, natural light, and locations that give each car room to
+  breathe. Shot on assignment and for the love of it.
+</ProjectIntro>
+
+<HorizontalGallery images={['automotive/39', 'automotive/02', 'automotive/04', 'automotive/05', 'automotive/06', 'automotive/07', 'automotive/08']} caption="Selects" />
+
+<GalleryGrid dir="automotive" />
+
+<ToolStack label="Process & tools" tools={[
+  { abbr: 'a7', icon: 'sony', name: 'Sony a7 III', note: 'Tamron 28–75mm f/2.8' },
+  { abbr: 'Lr', name: 'Adobe Lightroom', note: 'Edit · color grade', color: '#7cc4f5' },
+  { abbr: 'Ps', name: 'Adobe Photoshop', note: 'Cleanup & retouching', color: '#7cc4f5' },
+]} />

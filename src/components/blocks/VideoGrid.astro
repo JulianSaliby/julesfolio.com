@@ -1,0 +1,42 @@
+---
+/**
+ * VideoGrid — a row/grid of small self-hosted 16:9 players with captions.
+ * For clip sets (e.g. software tutorials) that don't warrant a full-width
+ * VideoFeature each.
+ */
+interface Clip {
+  src: string;     // public/ mp4 path
+  poster?: string;
+  title: string;
+}
+interface Props {
+  clips: Clip[];
+  caption?: string;
+}
+const { clips, caption } = Astro.props;
+---
+
+<section class="container video-grid section reveal">
+  {caption && <p class="meta" style="margin-bottom:1.25rem">{caption}</p>}
+  <div class="clips">
+    {clips.map((c) => (
+      <figure class="clip">
+        <div class="clip-frame">
+          <video controls preload="metadata" poster={c.poster} src={c.src}></video>
+        </div>
+        <figcaption class="meta">{c.title}</figcaption>
+      </figure>
+    ))}
+  </div>
+</section>
+
+<style>
+  .clips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+  .clip-frame { position: relative; aspect-ratio: 16 / 9; background: var(--bg-elevated); overflow: hidden; }
+  .clip-frame video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .clip figcaption { margin-top: 0.7rem; }
+</style>

@@ -1,0 +1,27 @@
+---
+title: Ultima — Process Reel
+disciplines: [videography]
+year: 2025
+weight: standard
+role: [Direction, Filming, Edit, Color, Sound]
+cover: covers/ultima
+summary: A vertical Instagram edit that rebuilds itself layer by layer — raw clip, grade, sound effects, music.
+featured_home: false
+---
+
+import ProjectIntro from '../../components/blocks/ProjectIntro.astro';
+import VideoFeature from '../../components/blocks/VideoFeature.astro';
+import ToolStack from '../../components/blocks/ToolStack.astro';
+
+<ProjectIntro title="Ultima — Process Reel" meta="Video · vertical" roles={['Direction', 'Filming', 'Edit', 'Color', 'Sound']}>
+  A vertical Instagram edit of the Ultima built to show its own making: the
+  raw clip with location sound, then the color grade, then sound effects,
+  then music — each layer stacking until the finished cut. Directed, filmed,
+  edited, graded, and sound-designed solo.
+</ProjectIntro>
+
+<VideoFeature ratio="9/16" src="/media/ultima/process.mp4" poster="/media/ultima/poster.jpg" title="Ultima — process reel" caption="Raw → grade → SFX → music" />
+
+<ToolStack label="Process & tools" tools={[
+  { abbr: 'Pr', name: 'Adobe Premiere Pro', note: 'Edit · color · sound effects · music', color: '#b1b1f5' },
+]} />

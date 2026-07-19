@@ -1,0 +1,34 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p class="meta">© {year} Julian Saliby</p>
+    <ul class="footer-links">
+      <li><a href="mailto:julesfolio.js@gmail.com">Email</a></li>
+      <li><a href="https://www.linkedin.com/in/julian-saliby-126705185/" target="_blank" rel="noopener">LinkedIn</a></li>
+      <li><a href="https://www.youtube.com/channel/UC9ECITEoYtaVFVXU8-mIJEw" target="_blank" rel="noopener">YouTube</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--hairline);
+    margin-top: var(--section-gap);
+  }
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 2rem;
+  }
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    font-size: var(--text-sm);
+  }
+  .footer-links a { color: var(--text-secondary); }
+</style>

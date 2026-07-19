@@ -1,0 +1,80 @@
+---
+import Base from '../../layouts/Base.astro';
+import VideoFeature from '../../components/blocks/VideoFeature.astro';
+import ReelCluster from '../../components/blocks/ReelCluster.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const order = { hero: 0, featured: 1, standard: 2, minor: 3 };
+const projects = (await getCollection('projects', ({ data }) => data.disciplines.includes('videography')))
+  .sort((a, b) => order[a.data.weight] - order[b.data.weight] || b.data.year - a.data.year);
+
+// Adobe CCV embeds carried over from the old site.
+// TODO(migration): replace with self-hosted MP4s / YouTube before leaving Adobe Portfolio.
+const longForm = ['Ne46wPGTw7U', 'ESYHwxcZ9um', 'QUJAzFdA9dE', '4ufUKrH7Mhi', '-rtw99NHMvj', 'IMqfrExNp4f', 'E_MsRFWsVx9', '9mo-iAXzEfm', '9Jw263CszUS'];
+const shortForm = ['TPHftQLb3EB', 'NKCvJB4tEnG', 'ExUFHfCFy8d', 'E5Pw9poGhkJ'];
+---
+
+<Base title="Videography" description="Videography by Julian Saliby — cinematic automotive films, commercial work, and short-form content.">
+  <header class="container gallery-head">
+    <p class="meta">Category</p>
+    <h1>Videography</h1>
+    <p class="lede">Cinematic automotive films, commercial work, and short-form content — shot, directed, and edited by Julian.</p>
+  </header>
+
+  <section class="container section">
+    <p class="meta" style="margin-bottom:1.25rem">Video projects</p>
+    <div class="proj-grid">
+      {projects.map((p) => (
+        <ProjectCard href={`/projects/${p.id}`} title={p.data.title} meta={`${p.data.year}`} cover={p.data.cover} />
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="meta container" style="margin-bottom:1rem">Long form</p>
+    {longForm.map((id, i) => (
+      <VideoFeature ccv={id} title={`Long form video ${i + 1}`} />
+    ))}
+  </section>
+
+  <section class="section">
+    <p class="meta container" style="margin-bottom:1rem">Fitness verticals</p>
+    <ReelCluster
+      srcs={['/media/reels/back-edit.mp4', '/media/reels/tricep-rope.mp4', '/media/reels/women-are-strong.mp4']}
+      caption="Short-form fitness edits — shot, cut, and sound-designed for vertical"
+    />
+  </section>
+
+  <section class="section">
+    <p class="meta container" style="margin-bottom:1rem">Short form</p>
+    <div class="container short-grid">
+      {shortForm.map((id, i) => (
+        <div class="short">
+          <iframe
+            src={`https://www-ccv.adobe.io/v1/player/ccv/${id}/embed`}
+            title={`Short form video ${i + 1}`}
+            loading="lazy"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .gallery-head { padding-top: 8rem; }
+  .gallery-head h1 { font-size: var(--text-2xl); margin-block: 0.5rem 1rem; }
+  .lede { color: var(--text-secondary); max-width: 52ch; }
+  .proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 3vw, 2.5rem); }
+  .short-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+  }
+  .short { position: relative; aspect-ratio: 9 / 16; background: var(--bg-elevated); }
+  .short iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  @media (max-width: 680px) { .proj-grid { grid-template-columns: 1fr; } }
+</style>

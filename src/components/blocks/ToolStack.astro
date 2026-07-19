@@ -1,0 +1,77 @@
+---
+/**
+ * ToolStack — "process & tools" strip. Each tool gets a small tile: a real
+ * brand SVG when one exists in src/assets/tool-icons/ (pass `icon`), otherwise
+ * a monogram (Adobe-style two-letter mark — which is what Adobe's own app
+ * icons look like). Restrained by design: dark tiles, muted brand tint only.
+ * To add a real logo later: drop `<name>.svg` (fill="currentColor") into
+ * src/assets/tool-icons/ and set `icon: '<name>'` on the tool.
+ */
+interface Tool {
+  abbr: string;   // tile monogram fallback, e.g. "Pr"
+  name: string;   // "Adobe Premiere Pro"
+  note?: string;  // "Edit · sound design"
+  color?: string; // muted brand tint for the monogram / icon
+  icon?: string;  // filename (no ext) of a brand SVG in src/assets/tool-icons/
+}
+interface Props {
+  tools: Tool[];
+  label?: string;
+}
+const { tools, label = 'Process & tools' } = Astro.props;
+
+// Inline brand SVGs so they inherit currentColor on the dark tiles.
+const icons: Record<string, string> = import.meta.glob('../../assets/tool-icons/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const iconSvg = (name?: string) => name && icons[`../../assets/tool-icons/${name}.svg`];
+---
+
+<section class="container tool-stack section reveal">
+  <p class="meta" style="margin-bottom:1.25rem">{label}</p>
+  <ul class="tools">
+    {tools.map((t) => (
+      <li class="tool">
+        {iconSvg(t.icon) ? (
+          <span class="tile has-icon" style={t.color ? `color:${t.color}` : undefined} aria-hidden="true" set:html={iconSvg(t.icon)} />
+        ) : (
+          <span class="tile" style={t.color ? `color:${t.color}` : undefined} aria-hidden="true">{t.abbr}</span>
+        )}
+        <span class="tool-text">
+          <span class="tool-name">{t.name}</span>
+          {t.note && <span class="tool-note">{t.note}</span>}
+        </span>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .tools {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 0.9rem 1.5rem;
+  }
+  .tool { display: flex; align-items: center; gap: 0.85rem; }
+  .tile {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.55rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--hairline);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--text);
+  }
+  .tile.has-icon :global(svg) { width: 1.15rem; height: 1.15rem; display: block; }
+  .tool-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+  .tool-name { font-size: var(--text-sm); font-weight: 600; }
+  .tool-note { font-size: var(--text-sm); color: var(--text-tertiary); }
+</style>
