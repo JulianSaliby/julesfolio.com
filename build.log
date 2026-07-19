@@ -1,0 +1,11 @@
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/sessions/tender-inspiring-pasteur/mnt/Julian's AI Brain/projects/portfolio/code/node_modules/package-manager-detector/dist/index.mjs' imported from /sessions/tender-inspiring-pasteur/mnt/Julian's AI Brain/projects/portfolio/code/node_modules/astro/dist/core/messages.js
+    at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+    at moduleResolve (node:internal/modules/esm/resolve:861:10)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:747:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:724:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:320:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: "file:///sessions/tender-inspiring-pasteur/mnt/Julian's%20AI%20Brain/projects/portfolio/code/node_modules/package-manager-detector/dist/index.mjs"
+}
