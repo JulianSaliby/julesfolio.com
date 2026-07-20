@@ -13,6 +13,7 @@ home_order: 1
 
 import HeroFullBleed from '../../components/blocks/HeroFullBleed.astro';
 import ProjectIntro from '../../components/blocks/ProjectIntro.astro';
+import CategoryNav from '../../components/blocks/CategoryNav.astro';
 import MediaSideBySide from '../../components/blocks/MediaSideBySide.astro';
 import Diptych from '../../components/blocks/Diptych.astro';
 import HorizontalGallery from '../../components/blocks/HorizontalGallery.astro';
@@ -31,16 +32,28 @@ import ToolStack from '../../components/blocks/ToolStack.astro';
   a brand identity, and the print and signage to sell it on the street.
 </ProjectIntro>
 
+{/* ── Jump nav ── lets a visitor see the whole scope up top, then click
+     straight down to any section instead of guessing what's below the fold */}
+<CategoryNav items={[
+  { label: 'Photography', anchor: '#photography', image: 'next-real-estate/04' },
+  { label: 'Film', anchor: '#film', image: 'next-real-estate/08' },
+  { label: 'Brand', anchor: '#brand', image: 'next-branding/02' },
+  { label: 'Print & signage', anchor: '#print', image: 'next-print/yard-sign-design' },
+]} />
+
 {/* ── Photography ── side-by-side lead image + swipeable set */}
+<div id="photography" class="anchor-target">
 <MediaSideBySide image="next-real-estate/02" alt="Rear elevation at dusk with pool" title="The photography">
   Shot at dusk to let the architecture glow from within. The set covers the
   full story of the home — elevations, interiors, and outdoor living — with a
   consistent, warm, high-contrast grade.
 </MediaSideBySide>
 
-<HorizontalGallery images={['next-real-estate/04', 'next-real-estate/06', 'next-real-estate/08', 'next-real-estate/09']} caption="Interiors & outdoor living — swipe through the set" />
+<HorizontalGallery images={['next-real-estate/03', 'next-real-estate/04', 'next-real-estate/05', 'next-real-estate/06', 'next-real-estate/07', 'next-real-estate/08', 'next-real-estate/09']} caption="Interiors & outdoor living — use the arrows to browse the set" />
+</div>
 
 {/* ── Film ── the two long-form films paired side by side, night cut compact */}
+<div id="film" class="anchor-target">
 <Breather quote="An empty new build has no story yet — the film had to give it one." />
 
 <VideoGrid caption="The films — a house walkthrough planned and shot on-site (Sony a7 III, gimbal, on-camera mic) with heavy sound design and AI furniture renders (Higgsfield) animating into place, alongside a cinematic stills film that sets the photography in motion." clips={[
@@ -49,22 +62,27 @@ import ToolStack from '../../components/blocks/ToolStack.astro';
 ]} />
 
 <VideoFeature ratio="1/1" src="/media/next/night.mp4" poster="/media/next/poster-night.jpg" title="Next — night lighting short" caption="Night cut — the house showing off its lighting after dark" />
+</div>
 
 {/* ── Brand ── */}
+<div id="brand" class="anchor-target">
 <MediaSideBySide flip image="next-branding/01" alt="Next brand guidelines cover with logo" title="The brand">
   The Next wordmark turns the "N" into a roofline. I designed the full
   identity — logo system, palette, type, and usage rules — delivered as a
   complete brand guidelines package the client still uses.
 </MediaSideBySide>
 
-<BrandBoard images={['next-branding/02', 'next-branding/03', 'next-branding/04', 'next-branding/05', 'next-branding/06', 'next-branding/07', 'next-branding/08', 'next-branding/09']} caption="From the brand guidelines" />
+<BrandBoard images={['next-branding/02', 'next-branding/03', 'next-branding/04', 'next-branding/05', 'next-branding/06', 'next-branding/07', 'next-branding/08', 'next-branding/09', 'next-branding/10', 'next-branding/11', 'next-branding/12']} caption="From the brand guidelines" />
+</div>
 
 {/* ── Print & signage ── flyer, planted sign (with the PDF), behind the scenes */}
+<div id="print" class="anchor-target">
 <Diptych images={['next-print/flyer-1', 'next-print/flyer-2']} alts={['508 NE 9th Avenue flyer — front', '508 NE 9th Avenue flyer — back']} />
 
 <PrintFrame image="next-print/yard-sign-design" alt="Next yard sign design" caption="Site signage, designed and produced" pdf="/docs/next-508-flyer.pdf" />
 
 <Diptych images={['next-bts/flyers-printed', 'next-bts/yard-sign-lawn', 'next-bts/camera-gimbal']} alts={['Printed flyers on the table', 'Yard sign planted on the front lawn', 'Camera and gimbal rig inside the house']} />
+</div>
 
 <ToolStack label="Process & tools" tools={[
   { abbr: 'a7', icon: 'sony', name: 'Sony a7 III + gimbal', note: 'Photography & walkthrough shoot' },

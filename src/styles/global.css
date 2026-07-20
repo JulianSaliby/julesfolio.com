@@ -31,7 +31,7 @@
   --max-media: 1440px;
   --max-text: 720px;
   --gutter: clamp(1.25rem, 4vw, 3rem);
-  --section-gap: clamp(4rem, 10vh, 8rem);
+  --section-gap: clamp(2.75rem, 6vh, 5rem);
 
   /* Motion */
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -80,6 +80,9 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
 }
 
 .section { margin-block: var(--section-gap); }
+
+/* Offsets an in-page jump target so the fixed nav doesn't cover it. */
+.anchor-target { scroll-margin-top: 5.5rem; }
 
 /* ---- Scroll reveal (reduced-motion safe) ---- */
 

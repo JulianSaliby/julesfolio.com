@@ -1,0 +1,115 @@
+---
+/**
+ * CategoryNav — an in-page jump strip, styled after the home page's
+ * hover-reveal "Featured Work" panels. Sits right under the project intro
+ * so a visitor can see everything the case study covers before committing
+ * to the scroll, then click straight down to any section.
+ */
+import { Image } from 'astro:assets';
+import { asset } from '../../lib/assets';
+
+interface Item {
+  label: string;
+  anchor: string; // "#photography"
+  image: string;  // extension-less asset path
+  alt?: string;
+}
+interface Props {
+  items: Item[];
+}
+const { items } = Astro.props;
+---
+
+<nav class="container cat-nav" aria-label="Jump to section">
+  <div class="cat-nav-row">
+    {items.map((item, i) => (
+      <a href={item.anchor} class="cat-nav-panel">
+        <figure class="cat-nav-media">
+          <Image
+            src={asset(item.image)}
+            alt={item.alt ?? item.label}
+            widths={[400, 700, 1000]}
+            sizes="(max-width: 820px) 45vw, 22vw"
+            loading={i < 2 ? 'eager' : 'lazy'}
+          />
+        </figure>
+        <div class="cat-nav-cap">
+          <span class="cat-nav-label">{item.label}</span>
+          <span class="cat-nav-arrow" aria-hidden="true">↓</span>
+        </div>
+      </a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  .cat-nav { margin-block: 0 clamp(2.5rem, 6vh, 4rem); }
+  .cat-nav-row {
+    display: flex;
+    gap: 0.5rem;
+    height: clamp(150px, 24vh, 230px);
+  }
+  .cat-nav-panel {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--bg-elevated);
+    transition: flex-grow 0.5s var(--ease);
+  }
+  .cat-nav-row:hover .cat-nav-panel { flex-grow: 0.75; }
+  .cat-nav-row .cat-nav-panel:hover { flex-grow: 2.2; }
+
+  .cat-nav-media { position: absolute; inset: 0; }
+  .cat-nav-media :global(img) {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(0.85) brightness(0.8);
+    transition: transform 0.8s var(--ease), filter 0.4s var(--ease);
+  }
+  .cat-nav-panel:hover .cat-nav-media :global(img) {
+    transform: scale(1.04);
+    filter: saturate(1) brightness(0.92);
+  }
+  .cat-nav-panel::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10, 10, 11, 0.82) 0%, rgba(10, 10, 11, 0.1) 60%);
+    pointer-events: none;
+  }
+  .cat-nav-cap {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: clamp(0.75rem, 1.5vw, 1.1rem);
+  }
+  .cat-nav-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cat-nav-panel:hover .cat-nav-label { color: var(--accent); }
+  .cat-nav-arrow {
+    flex: none;
+    color: var(--text-tertiary);
+    font-size: var(--text-sm);
+    transition: transform 0.3s var(--ease), color 0.3s var(--ease);
+  }
+  .cat-nav-panel:hover .cat-nav-arrow { transform: translateY(3px); color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .cat-nav-row { height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .cat-nav-panel { height: 120px; flex: none !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cat-nav-media :global(img), .cat-nav-panel { transition: none; }
+  }
+</style>
