@@ -15,13 +15,15 @@ import HeroFullBleed from '../../components/blocks/HeroFullBleed.astro';
 import ProjectIntro from '../../components/blocks/ProjectIntro.astro';
 import MediaSideBySide from '../../components/blocks/MediaSideBySide.astro';
 import Diptych from '../../components/blocks/Diptych.astro';
+import HorizontalGallery from '../../components/blocks/HorizontalGallery.astro';
 import BrandBoard from '../../components/blocks/BrandBoard.astro';
 import PrintFrame from '../../components/blocks/PrintFrame.astro';
 import Breather from '../../components/blocks/Breather.astro';
 import VideoFeature from '../../components/blocks/VideoFeature.astro';
+import VideoGrid from '../../components/blocks/VideoGrid.astro';
 import ToolStack from '../../components/blocks/ToolStack.astro';
 
-<HeroFullBleed image="next-real-estate/01" title="Next Real Estate" meta="Case study · 2025" alt="Modern two-storey home at dusk, warm interior light and palm trees" height="full" />
+<HeroFullBleed image="next-real-estate/01" title="Next Real Estate" meta="Case study · 2025" alt="Modern two-storey home at dusk, warm interior light and palm trees" height="tall" />
 
 <ProjectIntro title="One property. Every medium." meta="Next · 2025" roles={['Photography', 'Film', 'Brand Identity', 'Print & Signage']}>
   Next came to me to shoot a modern build in Victoria Park — and left with a
@@ -29,24 +31,26 @@ import ToolStack from '../../components/blocks/ToolStack.astro';
   a brand identity, and the print and signage to sell it on the street.
 </ProjectIntro>
 
+{/* ── Photography ── side-by-side lead image + swipeable set */}
 <MediaSideBySide image="next-real-estate/02" alt="Rear elevation at dusk with pool" title="The photography">
   Shot at dusk to let the architecture glow from within. The set covers the
   full story of the home — elevations, interiors, and outdoor living — with a
   consistent, warm, high-contrast grade.
 </MediaSideBySide>
 
-<Diptych images={['next-real-estate/04', 'next-real-estate/06']} alts={['Kitchen with marble island', 'Upper landing with chandelier at sunset']} />
+<HorizontalGallery images={['next-real-estate/04', 'next-real-estate/06', 'next-real-estate/08', 'next-real-estate/09']} caption="Interiors & outdoor living — swipe through the set" />
 
-<Diptych images={['next-real-estate/08', 'next-real-estate/09']} alts={['Covered patio and pool', 'Backyard through floor-to-ceiling glass']} />
-
+{/* ── Film ── the two long-form films paired side by side, night cut compact */}
 <Breather quote="An empty new build has no story yet — the film had to give it one." />
 
-<VideoFeature src="/media/next/walkthrough.mp4" poster="/media/next/poster-walkthrough.jpg" title="Next — house walkthrough film" caption="The walkthrough — planned and shot on-site (Sony a7 III, gimbal, on-camera mic), edited with heavy sound design. The home was pre-furnished new construction, so AI furniture renders (Higgsfield) animate into place to sell the feeling of living there." />
-
-<VideoFeature src="/media/next/cinematic-stills.mp4" poster="/media/next/poster-stills.jpg" title="Next — cinematic stills film" caption="Cinematic stills piece — the photography set in motion" />
+<VideoGrid caption="The films — a house walkthrough planned and shot on-site (Sony a7 III, gimbal, on-camera mic) with heavy sound design and AI furniture renders (Higgsfield) animating into place, alongside a cinematic stills film that sets the photography in motion." clips={[
+  { src: '/media/next/walkthrough.mp4', poster: '/media/next/poster-walkthrough.jpg', title: 'House walkthrough film' },
+  { src: '/media/next/cinematic-stills.mp4', poster: '/media/next/poster-stills.jpg', title: 'Cinematic stills film' },
+]} />
 
 <VideoFeature ratio="1/1" src="/media/next/night.mp4" poster="/media/next/poster-night.jpg" title="Next — night lighting short" caption="Night cut — the house showing off its lighting after dark" />
 
+{/* ── Brand ── */}
 <MediaSideBySide flip image="next-branding/01" alt="Next brand guidelines cover with logo" title="The brand">
   The Next wordmark turns the "N" into a roofline. I designed the full
   identity — logo system, palette, type, and usage rules — delivered as a
@@ -55,11 +59,10 @@ import ToolStack from '../../components/blocks/ToolStack.astro';
 
 <BrandBoard images={['next-branding/02', 'next-branding/03', 'next-branding/04', 'next-branding/05', 'next-branding/06', 'next-branding/07', 'next-branding/08', 'next-branding/09']} caption="From the brand guidelines" />
 
+{/* ── Print & signage ── flyer, planted sign (with the PDF), behind the scenes */}
 <Diptych images={['next-print/flyer-1', 'next-print/flyer-2']} alts={['508 NE 9th Avenue flyer — front', '508 NE 9th Avenue flyer — back']} />
 
 <PrintFrame image="next-print/yard-sign-design" alt="Next yard sign design" caption="Site signage, designed and produced" pdf="/docs/next-508-flyer.pdf" />
-
-<Breather quote="Design that leaves the screen: printed, planted, and put to work." />
 
 <Diptych images={['next-bts/flyers-printed', 'next-bts/yard-sign-lawn', 'next-bts/camera-gimbal']} alts={['Printed flyers on the table', 'Yard sign planted on the front lawn', 'Camera and gimbal rig inside the house']} />
 
