@@ -51,56 +51,53 @@ const categories = [
 ---
 
 <Base>
-  <!-- Intro -->
-  <section class="container home-head">
-    <h1 class="home-title">Julesfolio</h1>
-    <p class="home-line">
-      Industrial designer, photographer, and videographer — one eye for
-      product, brand, and image, across every medium a project needs.
-    </p>
+  <!-- Full-screen video hero -->
+  <section class="hero">
+    <video
+      class="hero-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster="/media/portfolio-header-poster.jpg"
+    >
+      <source src="/media/portfolio-header.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-scrim"></div>
+    <div class="container hero-content">
+      <h1 class="hero-title">Julesfolio</h1>
+      <p class="hero-line">
+        Industrial designer, photographer, and videographer — one eye for
+        product, brand, and image, across every medium a project needs.
+      </p>
+    </div>
+    <div class="hero-cue" aria-hidden="true"><span>Scroll</span></div>
   </section>
 
-  <!-- Featured Work — the range story, deliberately spanning disciplines -->
+  <!-- Featured Work — expanding panels; hover to reveal each project -->
   <section class="container section feat-section">
-    <div class="feat-head">
-      <p class="meta">Featured Work</p>
-      <div class="feat-nav">
-        <button type="button" class="feat-arrow" data-dir="-1" aria-label="Scroll featured work left">←</button>
-        <button type="button" class="feat-arrow" data-dir="1" aria-label="Scroll featured work right">→</button>
-      </div>
-    </div>
-    <div class="feat-track" id="feat-track">
+    <p class="meta feat-label">Featured Work</p>
+    <div class="feat-panels">
       {featured.map((p, i) => (
-        <a href={`/projects/${p.id}`} class="feat-card reveal">
-          <figure class="feat-media">
+        <a href={`/projects/${p.id}`} class="feat-panel reveal">
+          <figure class="feat-panel-media">
             <Image
               src={asset(p.data.cover)}
               alt={`${p.data.title} — work by Julian Saliby`}
-              widths={[500, 900, 1300]}
-              sizes="(max-width: 640px) 80vw, (max-width: 1020px) 45vw, 30vw"
-              loading={i === 0 ? 'eager' : 'lazy'}
+              widths={[600, 1000, 1400]}
+              sizes="(max-width: 820px) 100vw, 55vw"
+              loading={i < 2 ? 'eager' : 'lazy'}
             />
           </figure>
-          <div class="feat-caption">
-            <h2 class="feat-title">{p.data.title}</h2>
-            <p class="meta">{span(p)} · {p.data.year}</p>
+          <div class="feat-panel-cap">
+            <h2 class="feat-panel-title">{p.data.title}</h2>
+            <p class="meta feat-panel-meta">{span(p)} · {p.data.year}</p>
           </div>
         </a>
       ))}
     </div>
   </section>
-
-  <script>
-    const track = document.getElementById('feat-track');
-    if (track) {
-      document.querySelectorAll('.feat-arrow').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const dir = Number(btn.getAttribute('data-dir'));
-          track.scrollBy({ left: dir * track.clientWidth * 0.85, behavior: 'smooth' });
-        });
-      });
-    }
-  </script>
 
   <!-- Browse by category — a clear path in for single-discipline visitors -->
   <section class="container section">
@@ -133,57 +130,124 @@ const categories = [
 </Base>
 
 <style>
-  .home-head { padding-top: clamp(7rem, 16vh, 10rem); padding-bottom: clamp(1rem, 2.5vh, 1.5rem); }
-  .home-title { font-size: var(--text-hero); letter-spacing: -0.02em; }
-  .home-line { margin-top: 1rem; color: var(--text-secondary); max-width: 52ch; font-size: var(--text-lg); line-height: 1.4; }
-
-  /* Featured Work — pull this section closer to the intro than the default section rhythm */
-  .feat-section { margin-top: clamp(1.5rem, 4vh, 3rem); }
-
-  .feat-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-  .feat-nav { display: flex; gap: 0.5rem; }
-  .feat-arrow {
-    display: flex; align-items: center; justify-content: center;
-    width: 2.25rem; height: 2.25rem;
-    border: 1px solid var(--border, rgba(255, 255, 255, 0.15));
-    border-radius: 50%;
-    background: transparent;
-    color: var(--text-secondary);
-    font-size: var(--text-sm);
-    cursor: pointer;
-    transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
-  }
-  .feat-arrow:hover { color: var(--accent); border-color: var(--accent); }
-
-  /* Featured Work carousel — four equal cards, scroll-snapped */
-  .feat-track {
+  /* ---- Full-screen video hero ---- */
+  .hero {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    min-height: 560px;
+    width: 100%;
+    overflow: hidden;
     display: flex;
-    gap: clamp(1.25rem, 2.5vw, 2rem);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: var(--gutter);
-    padding-bottom: 0.5rem;
-    margin-bottom: -0.5rem;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    align-items: flex-end;
   }
-  .feat-track::-webkit-scrollbar { display: none; }
-  .feat-card {
-    flex: 0 0 clamp(260px, 30vw, 380px);
-    display: block;
-    scroll-snap-align: start;
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
   }
-  .feat-media { overflow: hidden; background: var(--bg-elevated); aspect-ratio: 3 / 2; border-radius: 2px; }
-  .feat-media :global(img) {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform 0.7s var(--ease);
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top, rgba(10, 10, 11, 0.92) 0%, rgba(10, 10, 11, 0.25) 42%, rgba(10, 10, 11, 0.55) 100%);
   }
-  .feat-card:hover .feat-media :global(img) { transform: scale(1.025); }
-  .feat-caption { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-top: 0.9rem; }
-  .feat-title { font-size: var(--text-base); font-weight: 600; letter-spacing: -0.01em; }
-  .feat-card:hover .feat-title { color: var(--accent); }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-bottom: clamp(3.5rem, 12vh, 8rem);
+  }
+  .hero-title {
+    font-size: var(--text-hero);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .hero-line {
+    margin-top: 1.15rem;
+    color: var(--text-secondary);
+    max-width: 48ch;
+    font-size: var(--text-lg);
+    line-height: 1.4;
+  }
+  .hero-cue {
+    position: absolute;
+    z-index: 2;
+    bottom: 1.4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text-tertiary);
+  }
+  .hero-cue span {
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    animation: cue 2.4s var(--ease) infinite;
+  }
+  @keyframes cue { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.9; } }
 
-  /* Category tiles */
+  /* ---- Featured Work — expanding panels ---- */
+  .feat-section { margin-top: 0; }
+  .feat-label { margin-bottom: 1.5rem; }
+
+  .feat-panels {
+    display: flex;
+    gap: 0.5rem;
+    height: clamp(360px, 62vh, 580px);
+  }
+  .feat-panel {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--bg-elevated);
+    transition: flex-grow 0.55s var(--ease);
+  }
+  /* When the row is hovered, non-hovered panels recede and the hovered one grows */
+  .feat-panels:hover .feat-panel { flex-grow: 0.65; }
+  .feat-panels .feat-panel:hover { flex-grow: 2.8; }
+
+  .feat-panel-media { position: absolute; inset: 0; }
+  .feat-panel-media :global(img) {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.9s var(--ease);
+  }
+  .feat-panel:hover .feat-panel-media :global(img) { transform: scale(1.04); }
+  .feat-panel::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10, 10, 11, 0.85) 0%, rgba(10, 10, 11, 0.05) 55%);
+    pointer-events: none;
+  }
+  .feat-panel-cap {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: clamp(1rem, 1.6vw, 1.5rem);
+  }
+  .feat-panel-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .feat-panel:hover .feat-panel-title { color: var(--accent); }
+  .feat-panel-meta {
+    margin-top: 0.4rem;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  }
+  .feat-panel:hover .feat-panel-meta { opacity: 1; transform: none; }
+
+  /* ---- Category tiles ---- */
   .cats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -220,13 +284,26 @@ const categories = [
     .cats { grid-template-columns: 1fr 1fr; }
     .cat-media { height: clamp(220px, 32vh, 320px); }
   }
+
+  /* Stack the featured panels on narrow / touch screens (no hover to expand) */
   @media (max-width: 820px) {
-    .feat-card { flex-basis: 82vw; }
+    .feat-panels {
+      display: grid;
+      grid-template-columns: 1fr;
+      height: auto;
+      gap: 0.75rem;
+    }
+    .feat-panel { height: clamp(220px, 44vw, 300px); }
+    .feat-panel-meta { opacity: 1; transform: none; }
+    .feat-panel-title { white-space: normal; }
   }
   @media (max-width: 560px) {
     .cats { grid-template-columns: 1fr; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .cat-media :global(img), .feat-media :global(img) { transition: none; }
+    .cat-media :global(img),
+    .feat-panel-media :global(img),
+    .feat-panel,
+    .hero-cue span { transition: none; animation: none; }
   }
 </style>
