@@ -9,15 +9,9 @@ const order = { hero: 0, featured: 1, standard: 2, minor: 3 };
 const projects = (await getCollection('projects', ({ data }) => data.disciplines.includes('industrial-design')))
   .sort((a, b) => order[a.data.weight] - order[b.data.weight] || b.data.year - a.data.year);
 
-// Rebuilding project-by-project from the old site; covers shown now, pages next.
-const items = [
-  { title: 'Balco Furniture Piece', year: 2024, cover: 'covers/furniture' },
-  { title: 'Inferno Fire Extinguisher', year: 2022, cover: 'covers/inferno-fire-extinguisher' },
-  { title: 'Product Brand Extension', year: 2022, cover: 'covers/product-brand-extension' },
-  { title: 'Walkie Talkie Redesign', year: 2022, cover: 'covers/walkie-talkie-redesign' },
-  { title: 'Portable Tool Belt', year: 2022, cover: 'covers/portable-tool-belt' },
-  { title: 'Winter Skateboard', year: 2022, cover: 'covers/winter-skateboard' },
-].filter((i) => hasAsset(i.cover));
+// All Industrial Design projects are now real case studies in the `projects`
+// collection (see src/content/projects/) — nothing left in "coming soon".
+const items: { title: string; year: number; cover: string }[] = [];
 ---
 
 <Base title="Industrial Design">

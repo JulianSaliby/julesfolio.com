@@ -9,12 +9,9 @@ const order = { hero: 0, featured: 1, standard: 2, minor: 3 };
 const projects = (await getCollection('projects', ({ data }) => data.disciplines.includes('photography')))
   .sort((a, b) => order[a.data.weight] - order[b.data.weight] || b.data.year - a.data.year);
 
-// Shot on the old site but not yet rebuilt here — shown, not yet clickable
-const upcoming = [
-  { title: 'Commercial Photography', year: 2022, cover: 'covers/commercial-photography-not-all-work-contracted' },
-  { title: 'Business Portrait', year: 2023, cover: 'covers/business-portrait' },
-  { title: 'Personal Photographs', year: 2023, cover: 'covers/personal-photographs' },
-];
+// Commercial Photography, Business Portrait, and Personal Photographs are now
+// real case studies in the `projects` collection — nothing left in "coming soon".
+const upcoming: { title: string; year: number; cover: string }[] = [];
 ---
 
 <Base title="Photography">

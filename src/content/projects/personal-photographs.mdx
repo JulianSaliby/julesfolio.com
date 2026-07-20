@@ -1,0 +1,19 @@
+---
+title: Personal Photographs
+disciplines: [photography]
+year: 2023
+weight: standard
+role: [Photography]
+cover: covers/personal-photographs
+summary: Personal photography work, shot for the love of it.
+featured_home: false
+---
+
+import ProjectIntro from '../../components/blocks/ProjectIntro.astro';
+import GalleryGrid from '../../components/blocks/GalleryGrid.astro';
+
+<ProjectIntro title="Personal Photographs" meta="Photography · 2023" roles={['Photography']}>
+  Personal work, shot for the love of it.
+</ProjectIntro>
+
+<GalleryGrid dir="personal-photographs" columns={2} />

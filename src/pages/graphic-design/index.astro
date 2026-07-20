@@ -9,11 +9,9 @@ const order = { hero: 0, featured: 1, standard: 2, minor: 3 };
 const projects = (await getCollection('projects', ({ data }) => data.disciplines.includes('graphic-design')))
   .sort((a, b) => order[a.data.weight] - order[b.data.weight] || b.data.year - a.data.year);
 
-// Rebuilding from the old site; covers shown now, pages next.
-const upcoming = [
-  { title: 'Olivera — Branding', year: 2024, cover: 'covers/olivera' },
-  { title: 'Graphic Design Posters', year: 2021, cover: 'covers/graphic-design-posters' },
-].filter((i) => hasAsset(i.cover));
+// Olivera and Graphic Design Posters are now real case studies in the
+// `projects` collection — nothing left in "coming soon".
+const upcoming: { title: string; year: number; cover: string }[] = [];
 ---
 
 <Base title="Graphic Design" description="Graphic design by Julian Saliby — brand identities, logo systems, and print.">
