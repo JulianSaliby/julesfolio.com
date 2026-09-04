@@ -46,12 +46,12 @@ if (pages.length > 0) {
         ) : (
           <div class="bk-spread">
             {s.left ? (
-              <Image src={s.left} alt={`${alt} — left page`} widths={[600, 900, 1300]} sizes="(max-width: 820px) 45vw, 22vw" loading="lazy" />
+              <Image src={s.left} alt={`${alt} — left page`} widths={[600, 900, 1300]} sizes="(max-width: 820px) 45vw, 22vw" loading="eager" />
             ) : (
               <div class="bk-blank" style={s.right ? `aspect-ratio:${s.right.width}/${s.right.height}` : ''} aria-hidden="true" />
             )}
             {s.right ? (
-              <Image src={s.right} alt={`${alt} — right page`} widths={[600, 900, 1300]} sizes="(max-width: 820px) 45vw, 22vw" loading="lazy" />
+              <Image src={s.right} alt={`${alt} — right page`} widths={[600, 900, 1300]} sizes="(max-width: 820px) 45vw, 22vw" loading="eager" />
             ) : (
               <div class="bk-blank" style={s.left ? `aspect-ratio:${s.left.width}/${s.left.height}` : ''} aria-hidden="true" />
             )}

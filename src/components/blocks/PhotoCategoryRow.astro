@@ -222,7 +222,11 @@ const data = categories.map((c) => {
 
   @media (max-width: 820px) {
     .cat-row { flex-direction: column; height: auto; }
-    .cat-tile { height: clamp(200px, 44vw, 280px); flex-grow: 1 !important; }
+    /* flex-basis:0 (from the desktop rule above) plus a height:auto container
+       leaves flex-grow nothing definite to grow into, so every tile collapsed
+       to 0 height on mobile — flex-basis:auto lets the explicit height below
+       size each tile directly instead of relying on grown flex space. */
+    .cat-tile { flex: 0 0 auto !important; height: clamp(200px, 44vw, 280px); }
     .cat-row.has-open { height: auto; }
     /* Right-side slivers are a row concept — stacked/column layout has no
        "right," so inactive categories fully collapse here instead. */
