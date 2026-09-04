@@ -1,0 +1,151 @@
+---
+/**
+ * BookletViewer — simulates flipping through a physical booklet: the cover
+ * shown alone and closed, then opening to a blank inside-cover page paired
+ * with the first content page, then real two-page spreads from there on.
+ * Paginated with prev/next controls instead of scrolling everything at once.
+ */
+import { Image } from 'astro:assets';
+import { assetsIn } from '../../lib/assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  dir: string; // src/assets/<dir> containing p-01, p-02, … in book-page order
+  alt?: string;
+}
+const { dir, alt = 'Process book page' } = Astro.props;
+
+const pages = assetsIn(dir);
+
+type Spread =
+  | { kind: 'cover'; img: ImageMetadata }
+  | { kind: 'spread'; left?: ImageMetadata; right?: ImageMetadata };
+
+const spreads: Spread[] = [];
+if (pages.length > 0) {
+  spreads.push({ kind: 'cover', img: pages[0] });
+  if (pages.length > 1) {
+    // Opening the cover reveals a blank inside-cover page on the left and
+    // the first real content page on the right.
+    spreads.push({ kind: 'spread', right: pages[1] });
+    for (let i = 2; i < pages.length; i += 2) {
+      spreads.push({ kind: 'spread', left: pages[i], right: pages[i + 1] });
+    }
+  }
+}
+---
+
+<div class="booklet" data-booklet>
+  <div class="bk-stage">
+    {spreads.map((s, i) => (
+      <div class:list={['bk-page', i === 0 && 'is-active']} data-index={i}>
+        {s.kind === 'cover' ? (
+          <figure class="bk-solo">
+            <Image src={s.img} alt={`${alt} — cover`} widths={[600, 900, 1300]} sizes="(max-width: 820px) 90vw, 44vw" loading={i === 0 ? 'eager' : 'lazy'} />
+          </figure>
+        ) : (
+          <div class="bk-spread">
+            {s.left ? (
+              <Image src={s.left} alt={`${alt} — left page`} widths={[600, 900, 1300]} sizes="(max-width: 820px) 45vw, 22vw" loading="lazy" />
+            ) : (
+              <div class="bk-blank" style={s.right ? `aspect-ratio:${s.right.width}/${s.right.height}` : ''} aria-hidden="true" />
+            )}
+            {s.right ? (
+              <Image src={s.right} alt={`${alt} — right page`} widths={[600, 900, 1300]} sizes="(max-width: 820px) 45vw, 22vw" loading="lazy" />
+            ) : (
+              <div class="bk-blank" style={s.left ? `aspect-ratio:${s.left.width}/${s.left.height}` : ''} aria-hidden="true" />
+            )}
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+
+  {spreads.length > 1 && (
+    <div class="bk-controls">
+      <button type="button" class="bk-prev" aria-label="Previous page" disabled>‹</button>
+      <span class="bk-count meta"><span class="bk-cur">1</span> / {spreads.length}</span>
+      <button type="button" class="bk-next" aria-label="Next page">›</button>
+    </div>
+  )}
+</div>
+
+<style>
+  .booklet { display: flex; flex-direction: column; align-items: center; }
+  .bk-stage { width: 100%; }
+  .bk-page { display: none; }
+  .bk-page.is-active { display: block; }
+
+  .bk-solo { max-width: 46%; margin-inline: auto; }
+  .bk-solo :global(img) {
+    width: 100%; height: auto; display: block;
+    background: var(--bg-elevated);
+    box-shadow: 0 1px 0 var(--hairline);
+  }
+
+  .bk-spread { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .bk-spread :global(img) {
+    width: 100%; height: auto; display: block;
+    background: var(--bg-elevated);
+    box-shadow: 0 1px 0 var(--hairline);
+  }
+  /* A blank page is literal white paper, not the site's dark surface — it's
+     standing in for an unprinted physical page, not a UI panel. */
+  .bk-blank { width: 100%; background: #f2f1ec; box-shadow: 0 1px 0 var(--hairline); }
+
+  .bk-controls {
+    display: flex; align-items: center; justify-content: center; gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .bk-prev, .bk-next {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; line-height: 1; color: var(--text);
+    background: var(--bg-elevated); border: 1px solid var(--hairline);
+    cursor: pointer;
+    transition: background 0.25s var(--ease), border-color 0.25s var(--ease), opacity 0.25s var(--ease);
+  }
+  .bk-prev:hover:not(:disabled), .bk-next:hover:not(:disabled) {
+    background: var(--bg-subtle); border-color: var(--text-tertiary);
+  }
+  .bk-prev:disabled, .bk-next:disabled { opacity: 0.3; cursor: default; }
+  .bk-count { color: var(--text-tertiary); min-width: 4ch; text-align: center; }
+
+  @media (max-width: 680px) {
+    .bk-solo { max-width: 80%; }
+    .bk-spread { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-booklet]').forEach((root) => {
+    const pages = Array.from(root.querySelectorAll<HTMLElement>('.bk-page'));
+    const prevBtn = root.querySelector<HTMLButtonElement>('.bk-prev');
+    const nextBtn = root.querySelector<HTMLButtonElement>('.bk-next');
+    const curEl = root.querySelector<HTMLElement>('.bk-cur');
+    let index = 0;
+
+    // The panel that hosts this booklet (PhotoCategoryRow's accordion) sizes
+    // itself once from scrollHeight when opened; each page turn can change
+    // content height, so re-measure it after every turn too.
+    function syncHostPanel() {
+      const panel = root.closest<HTMLElement>('.cat-panel');
+      if (!panel || !panel.classList.contains('is-open')) return;
+      requestAnimationFrame(() => {
+        panel.style.setProperty('--panel-h', `${panel.scrollHeight}px`);
+      });
+    }
+
+    function show(i: number) {
+      index = Math.max(0, Math.min(pages.length - 1, i));
+      pages.forEach((p, idx) => p.classList.toggle('is-active', idx === index));
+      if (prevBtn) prevBtn.disabled = index === 0;
+      if (nextBtn) nextBtn.disabled = index === pages.length - 1;
+      if (curEl) curEl.textContent = String(index + 1);
+      syncHostPanel();
+    }
+
+    prevBtn?.addEventListener('click', () => show(index - 1));
+    nextBtn?.addEventListener('click', () => show(index + 1));
+  });
+</script>

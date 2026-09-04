@@ -1,0 +1,296 @@
+---
+import { Image } from 'astro:assets';
+import { asset, assetsIn } from '../../lib/assets';
+import GalleryGrid from './GalleryGrid.astro';
+import BookletViewer from './BookletViewer.astro';
+
+interface Category {
+  title: string;
+  href: string; // full project page, for "larger viewing"
+  dir: string; // src/assets/<dir> — every image in it becomes the inline gallery
+  cover?: string; // extension-less asset path; defaults to the first image in dir
+  /** Renders the panel as a paginated left/right booklet (cover → blank
+   * inside-cover + first page → two-page spreads) instead of a scrolling
+   * image grid — for process books meant to be read in page order. */
+  viewer?: 'booklet';
+}
+interface Props {
+  categories: Category[];
+  /** Columns in each opened category's gallery. 1 = full-width single-column
+   * "pages" stacked vertically, instead of the default 3-across grid. */
+  galleryColumns?: 1 | 2 | 3 | 4;
+  /** Show every image in the opened panel instead of capping at PREVIEW_LIMIT
+   * behind a "View full gallery" link. */
+  fullGallery?: boolean;
+}
+const { categories, galleryColumns = 3, fullGallery = false } = Astro.props;
+
+const PREVIEW_LIMIT = 10;
+const data = categories.map((c) => {
+  const images = assetsIn(c.dir);
+  const hasMore = !fullGallery && images.length > PREVIEW_LIMIT;
+  return { ...c, id: c.dir, cover: c.cover ? asset(c.cover) : images[0], count: images.length, hasMore };
+});
+---
+
+<div class="cat-accordion">
+  <!-- Hover-expand row (same mechanic as FlagshipRow) — all tiles always fit
+       the row width via flex-grow redistribution, so there's never a scrollbar.
+       Opening one collapses the rest and turns the clicked tile into a full-
+       width header for its gallery below it. -->
+  <div class="cat-row">
+    {data.map((c) => (
+      <div class="cat-tile" data-panel={c.id}>
+        <button type="button" class="cat-tile-btn" data-panel={c.id} aria-expanded="false" aria-controls={`panel-${c.id}`} aria-label={`Expand ${c.title} gallery`}>
+          <figure class="cat-media">
+            <Image src={c.cover} alt={c.title} widths={[500, 800, 1200, 1600]} sizes="100vw" />
+          </figure>
+        </button>
+        <div class="ph-tag">
+          <strong>{c.title}</strong>
+          <span class="meta cat-count">{c.count} photos</span>
+          <a href={c.href} class="cat-view-link">Open full page →</a>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {data.map((c) => (
+    <div class="cat-panel" id={`panel-${c.id}`}>
+      <div class="cat-preview">
+        {c.viewer === 'booklet' ? (
+          <BookletViewer dir={c.id} alt={c.title} />
+        ) : (
+          <>
+            <GalleryGrid dir={c.id} columns={galleryColumns} limit={fullGallery ? undefined : PREVIEW_LIMIT} />
+            {c.hasMore && (
+              <div class="cat-fade">
+                <a href={c.href} class="cat-view-full">View full gallery →</a>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  /* ---- Hover-expand row — piano-key flex-grow, borrowed from FlagshipRow. ---- */
+  .cat-row {
+    display: flex;
+    gap: 0.5rem;
+    height: clamp(300px, 44vh, 420px);
+    transition: height 0.55s var(--ease);
+  }
+  .cat-tile {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--bg-elevated);
+    opacity: 1;
+    transition: flex-grow 0.55s var(--ease), flex-basis 0.55s var(--ease), opacity 0.4s var(--ease);
+  }
+  .cat-row:hover .cat-tile { flex-grow: 0.85; }
+  .cat-row .cat-tile:hover { flex-grow: 1.5; }
+
+  /* Opening a category: the picked tile becomes a wide horizontal header; the
+     rest shrink to thin, still-clickable slivers pushed to the right (via
+     `order`) so you can jump straight to another gallery without collapsing
+     first. */
+  .cat-row.has-open { height: 220px; }
+  .cat-row.has-open .cat-tile:not(.is-open) {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 68px;
+    opacity: 0.55;
+  }
+  .cat-row.has-open .cat-tile:not(.is-open):hover { opacity: 1; }
+  .cat-row.has-open .cat-tile:not(.is-open) .ph-tag { display: none; }
+  .cat-row.has-open .cat-tile.is-open { flex-grow: 1; flex-basis: 0; order: -1; }
+
+  .cat-tile-btn {
+    position: absolute; inset: 0;
+    display: block; width: 100%; height: 100%;
+    border: 0; padding: 0; margin: 0; cursor: pointer; background: none;
+  }
+  .cat-media { position: absolute; inset: 0; }
+  .cat-media :global(img) {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.9s var(--ease);
+  }
+  .cat-tile:hover .cat-media :global(img) { transform: scale(1.02); }
+
+  .ph-tag {
+    position: absolute;
+    inset-inline: 0; bottom: 0;
+    z-index: 2;
+    padding: clamp(0.85rem, 1.5vw, 1.35rem);
+    /* Strong, extended-reach scrim — some source photos (product/commercial
+       shoots especially) are bright or mixed light/dark right where the title
+       sits, so the fade needs to guarantee contrast regardless of what's in
+       the shot, not just lightly tint a typically-dark bottom edge. */
+    background: linear-gradient(to top, rgba(10, 10, 11, 0.92) 0%, rgba(10, 10, 11, 0.62) 45%, rgba(10, 10, 11, 0.05) 88%);
+    pointer-events: none;
+  }
+  .cat-tile.is-open .ph-tag {
+    display: flex; align-items: baseline; gap: 1rem;
+    background: linear-gradient(to top, rgba(10, 10, 11, 0.85) 0%, rgba(10, 10, 11, 0.35) 70%, rgba(10, 10, 11, 0.1) 100%);
+  }
+  .ph-tag strong {
+    display: block;
+    font-size: clamp(0.95rem, 1.7vw, var(--text-lg));
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-align: left;
+    /* Belt-and-suspenders on top of the scrim — keeps the title legible even
+       against a bright/white patch of a photo (e.g. studio product shots). */
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85), 0 1px 14px rgba(0, 0, 0, 0.5);
+    /* Wrap width is pinned to the viewport, not the tile's own (hover-animated)
+       width — otherwise the title reflows/reshapes as the tile grows on hover,
+       which is exactly what shouldn't happen. Only the deliberate open/header
+       state (below) is allowed to change how it lays out. */
+    max-width: clamp(140px, 16vw, 220px);
+  }
+  .cat-tile.is-open .ph-tag strong { max-width: none; white-space: nowrap; }
+  .cat-count, .cat-view-link {
+    display: block;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+    white-space: nowrap;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85), 0 1px 14px rgba(0, 0, 0, 0.5);
+  }
+  .cat-count { margin-top: 0.35rem; font-size: var(--text-sm); color: var(--text-secondary); }
+  .cat-view-link {
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    pointer-events: auto;
+    position: relative;
+    z-index: 4;
+  }
+  .cat-tile:hover .cat-count, .cat-tile:hover .cat-view-link,
+  .cat-tile.is-open .cat-count, .cat-tile.is-open .cat-view-link { opacity: 1; transform: none; }
+  /* In header mode the meta line sits inline next to the title instead of
+     stacked, and the page link no longer needs the hover-triggered nudge. */
+  .cat-tile.is-open .cat-count { margin-top: 0; }
+  .cat-tile.is-open .cat-view-link { margin-top: 0; margin-left: auto; }
+
+  /* ---- Expand/collapse panel — height-animated via a JS-measured custom
+     property since `hidden`/`display:none` can't transition. Collapsed to
+     zero height by default so a closed category takes no space in the flow. ---- */
+  .cat-panel {
+    max-height: 0;
+    overflow: hidden;
+    margin-top: 0;
+    transition: max-height 0.6s var(--ease), margin-top 0.6s var(--ease);
+  }
+  .cat-panel.is-open {
+    max-height: var(--panel-h, 6000px);
+    margin-top: 1.4rem;
+  }
+
+  .cat-preview { position: relative; }
+  .cat-fade {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 240px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 1.75rem;
+    background: linear-gradient(to bottom, transparent 0%, var(--bg) 78%);
+    pointer-events: none;
+  }
+  .cat-view-full {
+    pointer-events: auto;
+    display: inline-flex; align-items: center;
+    font-size: var(--text-sm); color: var(--text);
+    background: var(--bg-elevated); border: 1px solid var(--hairline); border-radius: 999px;
+    padding: 0.55rem 1.2rem;
+    transition: border-color 0.25s var(--ease), background 0.25s var(--ease);
+  }
+  .cat-view-full:hover { border-color: var(--text-tertiary); background: var(--bg-subtle); }
+
+  @media (max-width: 820px) {
+    .cat-row { flex-direction: column; height: auto; }
+    .cat-tile { height: clamp(200px, 44vw, 280px); flex-grow: 1 !important; }
+    .cat-row.has-open { height: auto; }
+    /* Right-side slivers are a row concept — stacked/column layout has no
+       "right," so inactive categories fully collapse here instead. */
+    .cat-row.has-open .cat-tile:not(.is-open) {
+      flex-basis: 0 !important;
+      height: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .cat-row.has-open .cat-tile.is-open { height: 260px; order: 0; }
+    .cat-count, .cat-view-link { opacity: 1; transform: none; }
+    .ph-tag strong { white-space: normal; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cat-tile, .cat-media :global(img), .cat-panel, .cat-row { transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.cat-accordion').forEach((root) => {
+    const row = root.querySelector<HTMLElement>('.cat-row');
+    const tiles = Array.from(root.querySelectorAll<HTMLElement>('.cat-tile'));
+    const panels = new Map<string, HTMLElement>();
+    root.querySelectorAll<HTMLElement>('.cat-panel').forEach((p) => panels.set(p.id.replace('panel-', ''), p));
+
+    function closeAll() {
+      row?.classList.remove('has-open');
+      tiles.forEach((t) => {
+        t.classList.remove('is-open');
+        t.querySelector('.cat-tile-btn')?.setAttribute('aria-expanded', 'false');
+      });
+      panels.forEach((p) => p.classList.remove('is-open'));
+    }
+
+    function openPanel(id: string, tile: HTMLElement) {
+      const panel = panels.get(id);
+      if (!panel) return;
+      panel.style.setProperty('--panel-h', `${panel.scrollHeight}px`);
+      closeAll();
+      row?.classList.add('has-open');
+      panel.classList.add('is-open');
+      tile.classList.add('is-open');
+      tile.querySelector('.cat-tile-btn')?.setAttribute('aria-expanded', 'true');
+    }
+
+    tiles.forEach((tile) => {
+      const btn = tile.querySelector<HTMLButtonElement>('.cat-tile-btn');
+      btn?.addEventListener('click', () => {
+        const id = tile.dataset.panel!;
+        const alreadyOpen = panels.get(id)?.classList.contains('is-open');
+        if (alreadyOpen) {
+          closeAll();
+        } else {
+          openPanel(id, tile);
+        }
+      });
+
+      // The "open full page" link sits inside the same tile as the toggle
+      // button — stop its click from also bubbling into a toggle.
+      tile.querySelector<HTMLAnchorElement>('.cat-view-link')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      panels.forEach((p) => {
+        if (p.classList.contains('is-open')) p.style.setProperty('--panel-h', `${p.scrollHeight}px`);
+      });
+    }, { passive: true });
+  });
+</script>

@@ -1,0 +1,109 @@
+---
+import { Image } from 'astro:assets';
+import { asset } from '../lib/assets';
+
+interface FlagshipItem {
+  href: string;
+  title: string;
+  meta: string;
+  cover: string; // asset() path
+}
+interface Props {
+  items: FlagshipItem[];
+}
+const { items } = Astro.props;
+---
+
+<div class="flagship-row">
+  {items.map((it) => (
+    <a href={it.href} class="flagship reveal">
+      <figure class="flagship-media">
+        <Image src={asset(it.cover)} alt={`${it.title} — work by Julian Saliby`} widths={[600, 1000, 1400]} sizes="(max-width: 820px) 100vw, 30vw" />
+      </figure>
+      <span class="case-flag">Case study</span>
+      <div class="ph-tag">
+        <strong>{it.title}</strong>
+        <span class="meta flagship-meta">{it.meta}</span>
+        <span class="cta">View case study →</span>
+      </div>
+    </a>
+  ))}
+</div>
+
+<style>
+  .flagship-row {
+    display: flex;
+    gap: 0.5rem;
+    height: clamp(340px, 52vh, 480px);
+  }
+  .flagship {
+    position: relative;
+    display: block;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--bg-elevated);
+    transition: flex-grow 0.55s var(--ease);
+  }
+  .flagship-row:hover .flagship { flex-grow: 0.7; }
+  .flagship-row .flagship:hover { flex-grow: 3; }
+
+  .flagship-media { position: absolute; inset: 0; }
+  .flagship-media :global(img) {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.9s var(--ease);
+  }
+  .flagship:hover .flagship-media :global(img) { transform: scale(1.04); }
+
+  .case-flag {
+    position: absolute; top: 0.75rem; right: 0.75rem; z-index: 3;
+    font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text); background: rgba(0,0,0,0.5); border: 1px solid var(--hairline);
+    padding: 0.2rem 0.5rem; border-radius: 20px;
+  }
+
+  .ph-tag {
+    position: absolute;
+    inset-inline: 0; bottom: 0;
+    z-index: 2;
+    padding: clamp(1rem, 1.6vw, 1.5rem);
+    background: linear-gradient(to top, rgba(10, 10, 11, 0.88) 0%, rgba(10, 10, 11, 0.05) 60%);
+  }
+  .ph-tag strong {
+    display: block;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .flagship:hover .ph-tag strong { color: var(--accent); }
+  .flagship-meta, .cta {
+    display: block;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+    white-space: nowrap;
+  }
+  .flagship-meta { margin-top: 0.35rem; }
+  .cta {
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .flagship:hover .flagship-meta, .flagship:hover .cta { opacity: 1; transform: none; }
+
+  @media (max-width: 820px) {
+    .flagship-row { flex-direction: column; height: auto; }
+    .flagship { height: clamp(240px, 48vw, 320px); flex-grow: 1 !important; }
+    .flagship-meta, .cta { opacity: 1; transform: none; }
+    .ph-tag strong { white-space: normal; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flagship, .flagship-media :global(img) { transition: none; }
+  }
+</style>

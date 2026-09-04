@@ -1,0 +1,170 @@
+---
+interface ReelItem {
+  title: string;
+  video: string; // public/ path
+  poster?: string; // public/ path; if omitted, a frame is auto-previewed from the clip
+}
+interface Props {
+  items: ReelItem[];
+}
+const { items } = Astro.props;
+const first = items[0];
+---
+
+<div class="reels">
+  <div class="reels-grid">
+    {items.map((it, i) => (
+      <button
+        type="button"
+        class:list={['reel-thumb', i === 0 && 'is-active']}
+        data-video={it.video}
+        data-poster={it.poster}
+        aria-label={`Play ${it.title}`}
+      >
+        {it.poster ? (
+          <img src={it.poster} alt={it.title} loading="lazy" />
+        ) : (
+          <video class="preview" muted preload="metadata" playsinline src={`${it.video}#t=0.5`}></video>
+        )}
+        <span class="play-badge small" aria-hidden="true">▶</span>
+      </button>
+    ))}
+  </div>
+
+  <div class="reels-hero">
+    <div class="hero-stage">
+      <button type="button" class="hero-play" data-video={first.video} data-poster={first.poster} aria-label={`Play ${first.title}`}>
+        {first.poster ? (
+          <img src={first.poster} alt={first.title} />
+        ) : (
+          <video class="preview" muted preload="metadata" playsinline src={`${first.video}#t=0.5`}></video>
+        )}
+        <span class="play-badge" aria-hidden="true">▶</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .reels {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    /* No align-items override — default `stretch` makes the thumbnail grid
+       match the hero's full height, so grid-template-rows below can divide
+       that height evenly instead of leaving dead space underneath. */
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+  }
+
+  /* Right side — one tall vertical (9:16) player, filling the frame edge to
+     edge. No caption — titles are intentionally not shown here. */
+  .reels-hero {
+    width: clamp(240px, 34vw, 470px);
+    justify-self: end;
+  }
+  .hero-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--bg-elevated);
+  }
+  .hero-play {
+    position: absolute; inset: 0;
+    display: block; width: 100%; height: 100%;
+    border: 0; padding: 0; margin: 0; cursor: pointer; background: none;
+  }
+  .hero-play img, .hero-play :global(img), .hero-play video, .hero-play :global(video) {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .hero-play.has-video-playing { cursor: default; }
+
+  /* Left side — the rest of the reels, also vertical tiles, as selection options.
+     Fixed 4×2 grid (matches the 8 clips exactly) stretched by the parent to the
+     hero's height, with rows split evenly — fills the space completely instead
+     of leaving a gap below a shorter, loosely auto-filled grid. */
+  .reels-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+  .reel-thumb {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    border-radius: 3px;
+    background: var(--bg-elevated);
+    display: block;
+    width: 100%;
+    border: 0; padding: 0; margin: 0; cursor: pointer;
+    outline-offset: -2px;
+  }
+  .reel-thumb.is-active { outline: 2px solid var(--text); }
+  .reel-thumb img, .reel-thumb :global(img), .reel-thumb video, .reel-thumb :global(video) {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s var(--ease);
+  }
+  .reel-thumb:hover img, .reel-thumb:hover :global(img) { transform: scale(1.045); }
+
+  .play-badge {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; color: var(--text);
+    background: rgba(10,10,11,0.4);
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+    pointer-events: none;
+  }
+  .play-badge.small { width: 30px; height: 30px; font-size: 0.6rem; }
+
+  @media (max-width: 780px) {
+    .reels { grid-template-columns: 1fr; }
+    .reels-hero { width: 100%; max-width: 320px; margin-inline: auto; order: -1; }
+    /* Stacked layout — the grid no longer shares a row with the hero, so let
+       it size itself naturally instead of stretching to a fixed row count. */
+    .reels-grid { grid-template-rows: none; }
+  }
+</style>
+
+<script>
+  function buildPlayer(video: string, poster?: string) {
+    const el = document.createElement('video');
+    el.src = video;
+    el.poster = poster ?? '';
+    el.controls = true;
+    el.autoplay = true;
+    el.playsInline = true;
+    return el;
+  }
+
+  document.querySelectorAll<HTMLElement>('.reels').forEach((reels) => {
+    const heroPlay = reels.querySelector<HTMLButtonElement>('.hero-play');
+    if (!heroPlay) return;
+
+    function play(video: string, poster: string | undefined, sourceBtn: HTMLElement | null) {
+      const el = buildPlayer(video, poster);
+      heroPlay!.replaceChildren(el);
+      heroPlay!.classList.add('has-video-playing');
+      el.play().catch(() => {});
+
+      reels.querySelectorAll('.reel-thumb.is-active').forEach((t) => t.classList.remove('is-active'));
+      sourceBtn?.classList.add('is-active');
+    }
+
+    heroPlay.addEventListener('click', () => {
+      const video = heroPlay.dataset.video;
+      if (!video || heroPlay.classList.contains('has-video-playing')) return;
+      play(video, heroPlay.dataset.poster, null);
+    }, { once: true });
+
+    reels.querySelectorAll<HTMLButtonElement>('.reel-thumb').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const video = btn.dataset.video;
+        if (!video) return;
+        play(video, btn.dataset.poster, btn);
+      });
+    });
+  });
+</script>

@@ -1,0 +1,29 @@
+---
+title: Short Form Reels
+disciplines: [videography]
+year: 2025
+weight: standard
+role: [Videography, Editing, Sound Design]
+cover: short-form-reels/brooke-socials
+summary: Vertical short-form video — social ads, product spots, and event edits cut for Reels, TikTok, and Shorts.
+featured_home: false
+---
+
+import ProjectIntro from '../../components/blocks/ProjectIntro.astro';
+import ShortFormReels from '../../components/blocks/ShortFormReels.astro';
+
+<ProjectIntro title="Short Form Reels" meta="Videography · Vertical — 2025" roles={['Videography', 'Editing', 'Sound Design']}>
+  Vertical, sound-designed edits built for Reels, TikTok, and Shorts — client social spots,
+  product ads, and event recaps. Pick any clip on the left to play it.
+</ProjectIntro>
+
+<ShortFormReels items={[
+  { title: 'Brooke — Socials', video: '/media/short-form-reels/brooke-socials.mp4', poster: '/media/short-form-reels-posters/brooke-socials.jpg' },
+  { title: 'Final Night', video: '/media/short-form-reels/final-night-video.mp4', poster: '/media/short-form-reels-posters/final-night-video.jpg' },
+  { title: 'Janera — Ad', video: '/media/short-form-reels/janera-ad.mp4', poster: '/media/short-form-reels-posters/janera-ad.jpg' },
+  { title: 'Darrken Fitness', video: '/media/short-form-reels/darrken-fitness.mp4', poster: '/media/short-form-reels-posters/darrken-fitness.jpg' },
+  { title: 'Burger & Uber', video: '/media/short-form-reels/burger-w-uber.mp4', poster: '/media/short-form-reels-posters/burger-w-uber.jpg' },
+  { title: 'Ghostie Pump', video: '/media/short-form-reels/ghostie-pump.mp4', poster: '/media/short-form-reels-posters/ghostie-pump.jpg' },
+  { title: 'Dennison — Ad', video: '/media/short-form-reels/dennison-ad.mp4', poster: '/media/short-form-reels-posters/dennison-ad.jpg' },
+  { title: 'MyHookah Giveaway', video: '/media/short-form-reels/myhookah-giveaway.mp4', poster: '/media/short-form-reels-posters/myhookah-giveaway.jpg' },
+]} />

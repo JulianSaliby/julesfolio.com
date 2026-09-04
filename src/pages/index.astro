@@ -1,58 +1,134 @@
 ---
 import Base from '../layouts/Base.astro';
-import { Image } from 'astro:assets';
-import { asset } from '../lib/assets';
-import { getCollection } from 'astro:content';
+import FlagshipRow from '../components/FlagshipRow.astro';
+import DisciplineSection from '../components/DisciplineSection.astro';
+import SectionNav from '../components/SectionNav.astro';
+import ShortFormReels from '../components/blocks/ShortFormReels.astro';
+import PhotoCategoryRow from '../components/blocks/PhotoCategoryRow.astro';
 
-// Flagships — featured on the home page AND inside each category gallery
-// they contribute to. Presented as portfolio cards (Julian's work), never
-// styled as the client's own site.
-const featured = (await getCollection('projects', ({ data }) => data.featured_home))
-  .sort((a, b) => (a.data.home_order ?? 99) - (b.data.home_order ?? 99));
+const sectionNavItems = [
+  { href: '#home', label: 'Home' },
+  { href: '#work', label: 'Flagship Work' },
+  { href: '#videography', label: 'Videography' },
+  { href: '#short-form-reels', label: 'Short Form Reels' },
+  { href: '#photography', label: 'Photography' },
+  { href: '#industrial-design', label: 'Industrial Design' },
+  { href: '#graphic-design', label: 'Graphic Design' },
+];
 
-const labels = {
-  videography: 'Videography',
-  photography: 'Photography',
-  'graphic-design': 'Graphic Design',
-  'industrial-design': 'Industrial Design',
+// ---- Flagship row — the 4 headline case studies, shown once, up top ----
+const flagships = [
+  {
+    href: '/projects/next-real-estate',
+    title: 'Next Real Estate',
+    meta: 'Photography · Film · Brand · Print — 2025',
+    cover: 'covers/next-real-estate',
+  },
+  {
+    href: '/projects/parallel',
+    title: 'Parallel',
+    meta: 'Brand · Product Demo Film · Tutorials — 2024–26',
+    cover: 'covers/parallel',
+  },
+  {
+    href: '/projects/janera',
+    title: 'Janera',
+    meta: 'AI-Generated Commercial Spots — 2026',
+    cover: 'covers/janera',
+  },
+  {
+    href: '/projects/icare',
+    title: 'iCare — Eye-Care Capstone',
+    meta: 'Industrial Design · Full Process Book — 2024',
+    cover: 'covers/eye-care-capstone',
+  },
+];
+
+// ---- Discipline sections — a continuous scroll through the rest of the work.
+// Flagships above aren't repeated here; each section leads with its own
+// standout, non-flagship piece, then a browse row of the rest. ----
+const videography = {
+  id: 'videography',
+  label: 'Videography',
+  sub: 'Client commercials · event coverage · automotive',
+  count: '8 pieces',
+  feature: {
+    href: '/projects/automotive-photography',
+    title: 'Automotive — BMW M3 CS',
+    meta: 'Videography — automotive',
+    video: '/media/videography/bmw-m3-cs.mp4',
+  },
+  browse: [
+    { title: 'Next — 508 Sale', href: '/projects/next-real-estate', video: '/media/videography/next-508-sale.mp4' },
+    { title: 'Cycleward — Full Crew', video: '/media/videography/cycleward-fullcrew.mp4' },
+    { title: 'Vandal Mouse — Commercial', href: '/projects/vandal-gaming-mouse', video: '/media/videography/vandal-mouse-commercial.mp4' },
+    { title: 'Capstone Video', video: '/media/videography/capstone.mp4' },
+    { title: 'Ultima — Cars & Coffee', href: '/projects/ultima', video: '/media/videography/cars-and-coffee-ultima.mp4' },
+    { title: 'Unknown Ent — Rabbit Hole', video: '/media/videography/unknown-ent-rabbit-hole.mp4' },
+    { title: "Marcello's — TV Spot", video: '/media/videography/marcellos-tv.mp4' },
+  ],
 };
-const span = (p) => p.data.disciplines.map((d) => labels[d]).join(' · ');
 
-const categories = [
-  {
-    href: '/videography',
-    label: 'Videography',
-    sub: 'Cinematic · commercial · short form',
-    cover: 'covers/videography-1',
-    alt: 'Videography by Julian Saliby',
+// ---- Short Form Reels — its own category, sitting between Videography and
+// Photography: vertical (9:16) social edits, distinct enough from the 16:9
+// discipline sections that they get their own dedicated picker layout. ----
+const shortFormReels = [
+  { title: 'Brooke — Socials', video: '/media/short-form-reels/brooke-socials.mp4', poster: '/media/short-form-reels-posters/brooke-socials.jpg' },
+  { title: 'Final Night', video: '/media/short-form-reels/final-night-video.mp4', poster: '/media/short-form-reels-posters/final-night-video.jpg' },
+  { title: 'Janera — Ad', video: '/media/short-form-reels/janera-ad.mp4', poster: '/media/short-form-reels-posters/janera-ad.jpg' },
+  { title: 'Darrken Fitness', video: '/media/short-form-reels/darrken-fitness.mp4', poster: '/media/short-form-reels-posters/darrken-fitness.jpg' },
+  { title: 'Burger & Uber', video: '/media/short-form-reels/burger-w-uber.mp4', poster: '/media/short-form-reels-posters/burger-w-uber.jpg' },
+  { title: 'Ghostie Pump', video: '/media/short-form-reels/ghostie-pump.mp4', poster: '/media/short-form-reels-posters/ghostie-pump.jpg' },
+  { title: 'Dennison — Ad', video: '/media/short-form-reels/dennison-ad.mp4', poster: '/media/short-form-reels-posters/dennison-ad.jpg' },
+  { title: 'MyHookah Giveaway', video: '/media/short-form-reels/myhookah-giveaway.mp4', poster: '/media/short-form-reels-posters/myhookah-giveaway.jpg' },
+];
+
+// ---- Photography — a horizontal row of categories, each with an inline,
+// collapsible drop-down gallery instead of only being reachable by clicking
+// into its own page. Every category still links through to its full project
+// page too, for larger viewing. ----
+const photoCategories = [
+  { title: 'Automotive Photography', href: '/projects/automotive-photography', dir: 'automotive', cover: 'automotive/003' },
+  { title: 'MyHookah.ca', href: '/projects/my-hookah', dir: 'my-hookah', cover: 'my-hookah/08' },
+  { title: 'Turbo Wax', href: '/projects/turbo-wax', dir: 'turbo-wax' },
+  { title: 'Vandal Gaming Mouse', href: '/projects/vandal-gaming-mouse', dir: 'vandal-gaming-mouse', cover: 'vandal-gaming-mouse/02' },
+  { title: 'Commercial Photography', href: '/projects/commercial-photography', dir: 'commercial-photography', cover: 'commercial-photography/04' },
+];
+
+const graphicDesign = {
+  id: 'graphic-design',
+  label: 'Graphic Design',
+  sub: 'Identity · logo systems · print',
+  count: '2 pieces',
+  feature: {
+    href: '/projects/olivera',
+    title: 'Olivera — Branding Project',
+    meta: 'Graphic Design — 2024',
+    covers: ['olivera/01', 'olivera/02', 'olivera/03', 'olivera/04', 'olivera/05', 'olivera/06', 'olivera/07', 'olivera/08', 'olivera/09', 'olivera/10'],
   },
-  {
-    href: '/photography',
-    label: 'Photography',
-    sub: 'Automotive · architectural · commercial',
-    cover: 'covers/photo',
-    alt: 'Photography by Julian Saliby',
-  },
-  {
-    href: '/graphic-design',
-    label: 'Graphic Design',
-    sub: 'Identity · logo systems · print',
-    cover: 'covers/graphic-design-posters',
-    alt: 'Graphic design by Julian Saliby',
-  },
-  {
-    href: '/industrial-design',
-    label: 'Industrial Design',
-    sub: 'Products · furniture · capstone',
-    cover: 'covers/industrial-design-projects',
-    alt: 'Industrial design by Julian Saliby',
-  },
+  browse: [
+    { title: 'Graphic Design Posters', href: '/projects/graphic-design-posters', cover: 'covers/graphic-design-posters' },
+  ],
+};
+
+// ---- Industrial Design — same inline hover-expand category pattern as
+// Photography, so each project's process/detail shots are previewable right
+// on the homepage instead of only reachable via its own project page. ----
+const industrialCategories = [
+  { title: 'iCare — Eye-Care Capstone', href: '/projects/icare', dir: 'icare-book', cover: 'covers/eye-care-capstone', viewer: 'booklet' },
+  { title: 'Balco Furniture Piece', href: '/projects/furniture', dir: 'furniture', cover: 'covers/furniture' },
+  { title: 'Inferno Fire Extinguisher', href: '/projects/inferno-fire-extinguisher', dir: 'inferno-fire-extinguisher', cover: 'covers/inferno-fire-extinguisher' },
+  { title: 'Product Brand Extension', href: '/projects/product-brand-extension', dir: 'product-brand-extension', cover: 'covers/product-brand-extension' },
+  { title: 'Portable Tool Belt', href: '/projects/portable-tool-belt', dir: 'portable-tool-belt', cover: 'covers/portable-tool-belt' },
+  { title: 'Walkie Talkie Redesign', href: '/projects/walkie-talkie-redesign', dir: 'walkie-talkie-redesign', cover: 'covers/walkie-talkie-redesign' },
 ];
 ---
 
 <Base>
+  <SectionNav items={sectionNavItems} />
+
   <!-- Full-screen video hero -->
-  <section class="hero">
+  <section class="hero" id="home">
     <video
       class="hero-video"
       autoplay
@@ -71,52 +147,71 @@ const categories = [
         Industrial designer, photographer, and videographer — one eye for
         product, brand, and image, across every medium a project needs.
       </p>
+      <div class="hero-disciplines">
+        <span>Videography</span><span>Photography</span><span>Graphic Design</span><span>Industrial Design</span>
+      </div>
     </div>
     <div class="hero-cue" aria-hidden="true"><span>Scroll</span></div>
   </section>
 
-  <!-- Featured Work — expanding panels; hover to reveal each project -->
-  <section class="container section feat-section">
-    <p class="meta feat-label">Featured Work</p>
-    <div class="feat-panels">
-      {featured.map((p, i) => (
-        <a href={`/projects/${p.id}`} class="feat-panel reveal">
-          <figure class="feat-panel-media">
-            <Image
-              src={asset(p.data.cover)}
-              alt={`${p.data.title} — work by Julian Saliby`}
-              widths={[600, 1000, 1400]}
-              sizes="(max-width: 820px) 100vw, 55vw"
-              loading={i < 2 ? 'eager' : 'lazy'}
-            />
-          </figure>
-          <div class="feat-panel-cap">
-            <h2 class="feat-panel-title">{p.data.title}</h2>
-            <p class="meta feat-panel-meta">{span(p)} · {p.data.year}</p>
-          </div>
-        </a>
-      ))}
+  <!-- Flagship case studies — one horizontal row, all 4 visible at once -->
+  <section id="work" class="container section">
+    <p class="meta feat-label">Flagship Work</p>
+    <FlagshipRow items={flagships} />
+  </section>
+
+  <!-- Full portfolio, one continuous scroll -->
+  <DisciplineSection {...videography} videoBrowsePlaysInFeature />
+
+  <!-- Short Form Reels — its own category between Videography and Photography.
+       Vertical (9:16) clips don't fit the 16:9 discipline-section frame, so
+       this gets its own picker layout instead: tall hero + a grid to choose from. -->
+  <section class="discipline-block" id="short-form-reels">
+    <div class="discipline-head reveal">
+      <h2>Short Form Reels</h2>
+      <span class="count">Vertical social edits · Reels · TikTok · Shorts — {shortFormReels.length} pieces</span>
+    </div>
+    <div class="container">
+      <ShortFormReels items={shortFormReels} />
     </div>
   </section>
 
-  <!-- Browse by category — a clear path in for single-discipline visitors -->
-  <section class="container section">
-    <p class="meta" style="margin-bottom:1.5rem">Browse by category</p>
-    <div class="cats">
-      {categories.map((c) => (
-        <a href={c.href} class="cat reveal">
-          <figure class="cat-media">
-            <Image src={asset(c.cover)} alt={c.alt} widths={[600, 900, 1200]} sizes="(max-width: 820px) 100vw, 25vw" loading="lazy" />
-          </figure>
-          <div class="cat-overlay">
-            <div>
-              <h2 class="cat-name">{c.label}</h2>
-              <p class="cat-sub">{c.sub}</p>
-            </div>
-            <span class="cat-arrow" aria-hidden="true">→</span>
-          </div>
-        </a>
-      ))}
+  <!-- Photography — horizontal category row, each with an inline expandable
+       gallery (see PhotoCategoryRow.astro) instead of the standard feature+browse
+       DisciplineSection layout. -->
+  <section class="discipline-block" id="photography">
+    <div class="discipline-head reveal">
+      <h2>Photography</h2>
+      <span class="count">Automotive · architectural · commercial — {photoCategories.length} categories</span>
+    </div>
+    <div class="container">
+      <PhotoCategoryRow categories={photoCategories} />
+    </div>
+  </section>
+
+  <!-- Industrial Design — horizontal category row with an inline expandable
+       gallery per project, same pattern as Photography above. -->
+  <section class="discipline-block" id="industrial-design">
+    <div class="discipline-head reveal">
+      <h2>Industrial Design</h2>
+      <span class="count">Products · furniture · capstone — {industrialCategories.length} projects</span>
+    </div>
+    <div class="container">
+      <PhotoCategoryRow categories={industrialCategories} galleryColumns={1} fullGallery />
+    </div>
+  </section>
+
+  <DisciplineSection {...graphicDesign} />
+
+  <!-- Skillset strip — reinforces range in words, right before the close -->
+  <section class="container">
+    <div class="skill-strip reveal">
+      <span><b>Direction</b> — concept, storyboard, shot planning</span>
+      <span><b>Capture</b> — photography, cinematography, gimbal</span>
+      <span><b>Post</b> — Premiere Pro, color, sound design</span>
+      <span><b>Brand</b> — identity systems, print, signage</span>
+      <span><b>Product</b> — CAD, prototyping, user testing</span>
+      <span><b>AI-assisted</b> — generative video/image pipelines</span>
     </div>
   </section>
 
@@ -133,9 +228,10 @@ const categories = [
   /* ---- Full-screen video hero ---- */
   .hero {
     position: relative;
-    height: 100vh;
-    height: 100svh;
-    min-height: 560px;
+    height: 95vh;
+    height: 95svh;
+    min-height: 520px;
+    max-height: 1100px;
     width: 100%;
     overflow: hidden;
     display: flex;
@@ -173,6 +269,12 @@ const categories = [
     font-size: var(--text-lg);
     line-height: 1.4;
   }
+  .hero-disciplines {
+    margin-top: 1.6rem;
+    display: flex; gap: 1.4rem; flex-wrap: wrap;
+    font-size: var(--text-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary);
+  }
+  .hero-disciplines span { color: var(--text); border-bottom: 1px solid var(--hairline); padding-bottom: 0.15rem; }
   .hero-cue {
     position: absolute;
     z-index: 2;
@@ -189,121 +291,38 @@ const categories = [
   }
   @keyframes cue { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.9; } }
 
-  /* ---- Featured Work — expanding panels ---- */
-  .feat-section { margin-top: 0; }
   .feat-label { margin-bottom: 1.5rem; }
 
-  .feat-panels {
-    display: flex;
-    gap: 0.5rem;
-    height: clamp(360px, 62vh, 580px);
+  /* ---- Short Form Reels section — mirrors DisciplineSection's own head styling
+     (that CSS is scoped to that component, so it doesn't reach markup written
+     directly in this page — duplicated here to match). ---- */
+  .discipline-block { margin-block: clamp(3rem, 7vh, 5.5rem); }
+  .discipline-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+    padding-inline: var(--gutter);
+    max-width: var(--max-media); margin: 0 auto 1rem;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 0.9rem;
   }
-  .feat-panel {
-    position: relative;
-    flex: 1 1 0;
-    min-width: 0;
-    overflow: hidden;
-    border-radius: 2px;
-    background: var(--bg-elevated);
-    transition: flex-grow 0.55s var(--ease);
-  }
-  /* When the row is hovered, non-hovered panels recede and the hovered one grows */
-  .feat-panels:hover .feat-panel { flex-grow: 0.65; }
-  .feat-panels .feat-panel:hover { flex-grow: 2.8; }
+  .discipline-head h2 { font-size: clamp(1.3rem, 2.4vw, 1.9rem); font-weight: 600; letter-spacing: -0.01em; }
+  .discipline-head .count { font-size: var(--text-xs); color: var(--text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; }
 
-  .feat-panel-media { position: absolute; inset: 0; }
-  .feat-panel-media :global(img) {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform 0.9s var(--ease);
+  /* ---- Skillset strip ---- */
+  .skill-strip {
+    display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem;
+    padding-block: 1.4rem;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
   }
-  .feat-panel:hover .feat-panel-media :global(img) { transform: scale(1.04); }
-  .feat-panel::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(10, 10, 11, 0.85) 0%, rgba(10, 10, 11, 0.05) 55%);
-    pointer-events: none;
-  }
-  .feat-panel-cap {
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    z-index: 2;
-    padding: clamp(1rem, 1.6vw, 1.5rem);
-  }
-  .feat-panel-title {
-    font-size: var(--text-lg);
-    font-weight: 600;
-    letter-spacing: -0.015em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .feat-panel:hover .feat-panel-title { color: var(--accent); }
-  .feat-panel-meta {
-    margin-top: 0.4rem;
-    opacity: 0;
-    transform: translateY(4px);
-    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
-  }
-  .feat-panel:hover .feat-panel-meta { opacity: 1; transform: none; }
-
-  /* ---- Category tiles ---- */
-  .cats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: clamp(0.75rem, 1.5vw, 1.25rem);
-  }
-  .cat { position: relative; display: block; overflow: hidden; border-radius: 2px; }
-  .cat-media { height: clamp(260px, 42vh, 400px); background: var(--bg-elevated); }
-  .cat-media :global(img) {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform 1s var(--ease);
-  }
-  .cat:hover .cat-media :global(img) { transform: scale(1.02); }
-  .cat-overlay {
-    position: absolute; inset-inline: 0; bottom: 0;
-    display: flex; align-items: flex-end; justify-content: space-between; gap: 0.75rem;
-    padding: clamp(1rem, 2vw, 1.5rem);
-    background: linear-gradient(to top, rgba(10, 10, 11, 0.82), transparent);
-  }
-  .cat-name { font-size: var(--text-lg); letter-spacing: -0.015em; }
-  .cat-sub { margin-top: 0.3rem; color: var(--text-secondary); font-size: var(--text-sm); }
-  .cat-arrow {
-    color: var(--text-secondary);
-    font-size: var(--text-lg);
-    transition: transform 0.3s var(--ease), color 0.3s var(--ease);
-  }
-  .cat:hover .cat-arrow { transform: translateX(5px); color: var(--accent); }
+  .skill-strip span { font-size: var(--text-sm); color: var(--text-secondary); }
+  .skill-strip span b { color: var(--text); font-weight: 500; }
 
   .home-cta { text-align: center; padding-block: clamp(3rem, 8vh, 5rem); }
   .cta-line { margin-top: 0.6rem; }
   .cta-line a { color: var(--text-secondary); }
   .cta-line a:hover { color: var(--accent); }
 
-  @media (max-width: 1020px) {
-    .cats { grid-template-columns: 1fr 1fr; }
-    .cat-media { height: clamp(220px, 32vh, 320px); }
-  }
-
-  /* Stack the featured panels on narrow / touch screens (no hover to expand) */
-  @media (max-width: 820px) {
-    .feat-panels {
-      display: grid;
-      grid-template-columns: 1fr;
-      height: auto;
-      gap: 0.75rem;
-    }
-    .feat-panel { height: clamp(220px, 44vw, 300px); }
-    .feat-panel-meta { opacity: 1; transform: none; }
-    .feat-panel-title { white-space: normal; }
-  }
-  @media (max-width: 560px) {
-    .cats { grid-template-columns: 1fr; }
-  }
   @media (prefers-reduced-motion: reduce) {
-    .cat-media :global(img),
-    .feat-panel-media :global(img),
-    .feat-panel,
-    .hero-cue span { transition: none; animation: none; }
+    .hero-cue span { animation: none; }
   }
 </style>

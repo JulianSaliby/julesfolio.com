@@ -1,0 +1,141 @@
+---
+interface Item {
+  href: string; // in-page anchor, e.g. "#photography"
+  label: string;
+}
+interface Props {
+  items: Item[];
+}
+const { items } = Astro.props;
+---
+
+<nav class="section-nav" aria-label="Page sections">
+  <ul>
+    {items.map((it) => (
+      <li>
+        <a href={it.href} data-target={it.href.slice(1)}>{it.label}</a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .section-nav {
+    position: fixed;
+    left: clamp(1.25rem, 3vw, 2.5rem);
+    top: 7.5rem;
+    transform: translateX(-6px);
+    z-index: 40;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  }
+  /* Only shown once the hero has scrolled past — a fixed nav would otherwise
+     sit on top of the hero's own bottom-anchored copy. */
+  .section-nav.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+  .section-nav ul {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+    list-style: none;
+  }
+  .section-nav a {
+    display: block;
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: left;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    padding-block: 0.1rem;
+    padding-left: 0.9rem;
+    border-left: 2px solid transparent;
+    transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .section-nav a:hover { color: var(--text-secondary); }
+  .section-nav a.is-active {
+    color: var(--text);
+    border-left-color: var(--text);
+  }
+  .section-nav a:focus-visible {
+    outline: 1px solid var(--text-secondary);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 1150px) {
+    .section-nav { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .section-nav { transition: none; }
+    .section-nav a { transition: none; }
+  }
+</style>
+
+<script>
+  function initSectionNav() {
+    const nav = document.querySelector<HTMLElement>('.section-nav');
+    if (!nav) return;
+    const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>('a[data-target]'));
+    // Document order matches the order items were passed in, which matches
+    // the order the sections actually appear on the page.
+    const sections = links
+      .map((a) => document.getElementById(a.dataset.target!))
+      .filter((el): el is HTMLElement => !!el);
+    if (!sections.length) return;
+
+    const hero = sections[0];
+
+    const setActive = (id: string) => {
+      links.forEach((a) => {
+        const active = a.dataset.target === id;
+        a.classList.toggle('is-active', active);
+        if (active) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+    };
+
+    let ticking = false;
+    function update() {
+      ticking = false;
+
+      // Classic scrollspy: whichever section's top has most recently crossed
+      // a fixed line near the top of the viewport is "current." Works for any
+      // mix of section heights, no per-section threshold tuning required.
+      const line = window.innerHeight * 0.35;
+      let current = sections[0];
+      for (const el of sections) {
+        if (el.getBoundingClientRect().top <= line) current = el;
+        else break;
+      }
+      setActive(current.id);
+
+      // Keep the nav out of the hero entirely — fade in only once it's
+      // essentially scrolled past, so it can never sit on top of it.
+      const heroVisible = hero.getBoundingClientRect().bottom > window.innerHeight * 0.2;
+      nav.classList.toggle('is-visible', !heroVisible);
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    links.forEach((a) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById(a.dataset.target!)?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  }
+  initSectionNav();
+</script>

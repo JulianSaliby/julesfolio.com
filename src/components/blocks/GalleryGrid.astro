@@ -6,21 +6,278 @@ import type { ImageMetadata } from 'astro';
 interface Props {
   dir?: string;
   images?: string[];
-  columns?: 2 | 3;
+  columns?: 1 | 2 | 3 | 4;
+  /** Spans the full page width instead of the standard contained max-width. */
+  wide?: boolean;
+  /** Only render the first N images (e.g. a homepage preview of a full gallery). */
+  limit?: number;
 }
-const { dir, images, columns = 3 } = Astro.props;
-const list: ImageMetadata[] = dir ? assetsIn(dir) : (images ?? []).map(asset);
+const { dir, images, columns = 3, wide = false, limit } = Astro.props;
+const all: ImageMetadata[] = dir ? assetsIn(dir) : (images ?? []).map(asset);
+const list = limit ? all.slice(0, limit) : all;
+
+// Rough target row height per density — actual images-per-row still varies with
+// each photo's own aspect ratio, since rows are justified to fill the width
+// without cropping (no fixed tile shape). At columns=1 each image simply fills
+// the full row width at its own natural aspect ratio (the row-height baseline
+// cancels out in the single-item case), so the exact number here doesn't matter.
+const rowHeight = { 1: 480, 2: 380, 3: 260, 4: 190 }[columns];
 ---
 
-<section class:list={['container', 'masonry', `mcols-${columns}`, 'section', 'reveal']}>
-  {list.map((img) => (
-    <figure><Image src={img} alt="" widths={[600, 1000]} sizes={`(max-width: 680px) 100vw, ${Math.round(100 / columns)}vw`} loading="lazy" /></figure>
-  ))}
+<section class:list={[wide ? 'wide' : 'container', 'section']}>
+  <div class="justified" data-row-height={rowHeight} data-per-row={columns} style={`--rh: ${rowHeight}px`}>
+    {list.map((img, i) => (
+      <figure class="reveal" style={`--ar: ${img.width / img.height}`}>
+        <button type="button" class="gg-open" aria-label={`View image ${i + 1} of ${list.length} larger`}>
+          <Image src={img} alt="" widths={[400, 700, 1100]} sizes={`(max-width: 560px) 50vw, ${Math.round(100 / columns)}vw`} loading="lazy" />
+        </button>
+      </figure>
+    ))}
+  </div>
 </section>
 
 <style>
-  .masonry { columns: 3; column-gap: clamp(0.75rem, 1.5vw, 1.25rem); }
-  .mcols-2 { columns: 2; }
-  .masonry figure { break-inside: avoid; margin-bottom: clamp(0.75rem, 1.5vw, 1.25rem); }
-  @media (max-width: 680px) { .masonry, .mcols-2 { columns: 1; } }
+  /* Justified gallery — images keep their native aspect ratio (no cropping);
+     each row is scaled to exactly fill the width so the gap between every
+     image, and between every row, stays identical regardless of orientation. */
+  .justified {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(0.6rem, 1.2vw, 1.1rem);
+  }
+  .justified figure {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--bg-elevated);
+    flex-grow: 0;
+    flex-shrink: 0;
+    /* Sane pre-JS fallback; the script below sizes rows precisely. */
+    flex-basis: calc(var(--ar) * var(--rh));
+    height: var(--rh);
+  }
+  .gg-open {
+    display: block;
+    width: 100%; height: 100%;
+    border: 0; padding: 0; margin: 0;
+    background: none;
+    cursor: zoom-in;
+  }
+  .justified figure img, .justified figure :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s var(--ease);
+  }
+  .gg-open:hover :global(img) { transform: scale(1.035); }
+
+  /* ---- Lightbox — a single shared overlay (see script), styled here as
+     :global() since the JS-created elements live outside this component's
+     scoped markup. Astro only emits this block once per page even though
+     GalleryGrid itself is often used many times on the same page. ---- */
+  :global(.gg-lightbox) {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(6, 6, 7, 0.96);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  :global(.gg-lightbox.is-open) { opacity: 1; pointer-events: auto; }
+  :global(.gg-lb-stage) { max-width: 92vw; max-height: 88vh; }
+  :global(.gg-lb-img) {
+    display: block;
+    max-width: 92vw;
+    max-height: 88vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 2px;
+  }
+  :global(.gg-lb-close),
+  :global(.gg-lb-prev),
+  :global(.gg-lb-next) {
+    position: fixed;
+    z-index: 201;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--text);
+    background: rgba(10, 10, 11, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  :global(.gg-lb-close:hover),
+  :global(.gg-lb-prev:hover),
+  :global(.gg-lb-next:hover) {
+    background: rgba(10, 10, 11, 0.8);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  :global(.gg-lb-close) { top: 1.25rem; right: 1.25rem; }
+  :global(.gg-lb-prev) { left: 1.25rem; top: 50%; transform: translateY(-50%); }
+  :global(.gg-lb-next) { right: 1.25rem; top: 50%; transform: translateY(-50%); }
+  :global(.gg-lb-prev[hidden]),
+  :global(.gg-lb-next[hidden]) { display: none; }
+
+  @media (max-width: 640px) {
+    :global(.gg-lb-close) { top: 0.75rem; right: 0.75rem; width: 40px; height: 40px; font-size: 1.1rem; }
+    :global(.gg-lb-prev) { left: 0.5rem; width: 40px; height: 40px; font-size: 1.1rem; }
+    :global(.gg-lb-next) { right: 0.5rem; width: 40px; height: 40px; font-size: 1.1rem; }
+  }
 </style>
+
+<script>
+  function pickLargestSrc(img: HTMLImageElement): string {
+    const srcset = img.getAttribute('srcset');
+    if (!srcset) return img.currentSrc || img.src;
+    const candidates = srcset.split(',').map((entry) => {
+      const [url, w] = entry.trim().split(/\s+/);
+      return { url, w: parseInt(w) || 0 };
+    });
+    candidates.sort((a, b) => b.w - a.w);
+    return candidates[0]?.url || img.src;
+  }
+
+  let lightbox: HTMLElement | null = null;
+  let lbImg: HTMLImageElement | null = null;
+  let lbPrev: HTMLButtonElement | null = null;
+  let lbNext: HTMLButtonElement | null = null;
+  let currentList: string[] = [];
+  let currentIndex = 0;
+  let lastTrigger: HTMLElement | null = null;
+
+  function showIndex(i: number) {
+    currentIndex = (i + currentList.length) % currentList.length;
+    if (lbImg) lbImg.src = currentList[currentIndex];
+  }
+  function step(delta: number) {
+    showIndex(currentIndex + delta);
+  }
+
+  function onKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape') closeLightbox();
+    else if (e.key === 'ArrowLeft') step(-1);
+    else if (e.key === 'ArrowRight') step(1);
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    lightbox.classList.remove('is-open');
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', onKeydown);
+    lastTrigger?.focus();
+  }
+
+  function ensureLightbox() {
+    if (lightbox) return;
+    lightbox = document.createElement('div');
+    lightbox.className = 'gg-lightbox';
+    lightbox.setAttribute('role', 'dialog');
+    lightbox.setAttribute('aria-modal', 'true');
+    lightbox.setAttribute('aria-label', 'Image viewer');
+    lightbox.innerHTML =
+      '<button type="button" class="gg-lb-close" aria-label="Close">&#10005;</button>' +
+      '<button type="button" class="gg-lb-prev" aria-label="Previous image">&#8249;</button>' +
+      '<button type="button" class="gg-lb-next" aria-label="Next image">&#8250;</button>' +
+      '<div class="gg-lb-stage"><img class="gg-lb-img" alt="" /></div>';
+    document.body.appendChild(lightbox);
+
+    lbImg = lightbox.querySelector<HTMLImageElement>('.gg-lb-img');
+    lbPrev = lightbox.querySelector<HTMLButtonElement>('.gg-lb-prev');
+    lbNext = lightbox.querySelector<HTMLButtonElement>('.gg-lb-next');
+
+    lightbox.querySelector('.gg-lb-close')?.addEventListener('click', closeLightbox);
+    lbPrev?.addEventListener('click', () => step(-1));
+    lbNext?.addEventListener('click', () => step(1));
+    // Clicking the dark backdrop (not the image or the buttons) closes too.
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+  }
+
+  function openLightbox(list: string[], index: number, trigger: HTMLElement) {
+    ensureLightbox();
+    lastTrigger = trigger;
+    currentList = list;
+    const multi = list.length > 1;
+    if (lbPrev) lbPrev.hidden = !multi;
+    if (lbNext) lbNext.hidden = !multi;
+    showIndex(index);
+    lightbox!.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKeydown);
+    (lightbox!.querySelector('.gg-lb-close') as HTMLElement | null)?.focus();
+  }
+
+  document.querySelectorAll<HTMLElement>('.justified').forEach((container) => {
+    const buttons = Array.from(container.querySelectorAll<HTMLButtonElement>('.gg-open'));
+    const srcs = buttons.map((btn) => {
+      const img = btn.querySelector('img');
+      return img ? pickLargestSrc(img) : '';
+    });
+    buttons.forEach((btn, i) => {
+      btn.addEventListener('click', () => openLightbox(srcs, i, btn));
+    });
+  });
+</script>
+
+<script>
+  function layoutJustified(container: HTMLElement) {
+    const gap = parseFloat(getComputedStyle(container).columnGap || '16');
+    const baseHeight = Number(container.dataset.rowHeight) || 260;
+    const targetHeight =
+      window.innerWidth < 640 ? Math.min(baseHeight, 150) : window.innerWidth < 960 ? baseHeight * 0.8 : baseHeight;
+    // Fixed number of images per row (not width-fill-driven) — each row still
+    // gets scaled to exactly fill the width, so gaps stay even, but the count
+    // per row never varies with aspect ratio or screen size, until phone width.
+    // A configured single column stays single-column on phones too (it's
+    // already as narrow as the "cap at 2 on phone" rule is trying to reach).
+    const configuredPerRow = Number(container.dataset.perRow) || 3;
+    const perRow = window.innerWidth < 560 ? Math.min(2, configuredPerRow) : configuredPerRow;
+
+    const items = Array.from(container.children) as HTMLElement[];
+    const containerWidth = container.clientWidth;
+
+    for (let i = 0; i < items.length; i += perRow) {
+      const row = items.slice(i, i + perRow);
+      const ars = row.map((el) => parseFloat(el.style.getPropertyValue('--ar')));
+      const naturalWidth = ars.reduce((sum, ar) => sum + ar * targetHeight, 0);
+      const gaps = gap * (row.length - 1);
+      const available = containerWidth - gaps;
+      const isFullRow = row.length === perRow;
+      const scale = isFullRow ? available / naturalWidth : 1;
+      const h = targetHeight * scale;
+      row.forEach((el, idx) => {
+        el.style.flexBasis = `${ars[idx] * h}px`;
+        el.style.height = `${h}px`;
+      });
+    }
+  }
+
+  function init() {
+    const containers = document.querySelectorAll<HTMLElement>('.justified');
+    containers.forEach((el) => layoutJustified(el));
+
+    let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+    window.addEventListener(
+      'resize',
+      () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => containers.forEach((el) => layoutJustified(el)), 120);
+      },
+      { passive: true }
+    );
+  }
+  init();
+</script>
