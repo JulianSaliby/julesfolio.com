@@ -20,8 +20,10 @@ interface Props {
   browse: MediaItem[];
   /** When true, clicking a browse video loads & plays it in the feature frame above instead of playing inline in place. */
   videoBrowsePlaysInFeature?: boolean;
+  /** Show each browse tile's title caption. Off for a plain thumbnail grid. */
+  showBrowseTitles?: boolean;
 }
-const { id, label, sub, count, feature, browse, videoBrowsePlaysInFeature = false } = Astro.props;
+const { id, label, sub, count, feature, browse, videoBrowsePlaysInFeature = false, showBrowseTitles = true } = Astro.props;
 
 const featureCovers = feature.covers ?? (feature.cover ? [feature.cover] : []);
 const featureImgs = featureCovers.map((c) => asset(c));
@@ -103,7 +105,7 @@ const featureImgs = featureCovers.map((c) => asset(c));
               </div>
             )}
             {!it.href && <span class="browse-flag">Browse</span>}
-            <div class="ph-tag browse-tag"><span>{it.title}</span></div>
+            {showBrowseTitles && <div class="ph-tag browse-tag"><span>{it.title}</span></div>}
           </div>
         );
       })}
