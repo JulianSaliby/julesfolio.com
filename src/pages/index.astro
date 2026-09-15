@@ -5,6 +5,8 @@ import DisciplineSection from '../components/DisciplineSection.astro';
 import SectionNav from '../components/SectionNav.astro';
 import ShortFormReels from '../components/blocks/ShortFormReels.astro';
 import PhotoCategoryRow from '../components/blocks/PhotoCategoryRow.astro';
+import GalleryGrid from '../components/blocks/GalleryGrid.astro';
+import { assetsIn } from '../lib/assets';
 
 const sectionNavItems = [
   { href: '#home', label: 'Home' },
@@ -13,6 +15,7 @@ const sectionNavItems = [
   { href: '#short-form-reels', label: 'Short Form Reels' },
   { href: '#photography', label: 'Photography' },
   { href: '#industrial-design', label: 'Industrial Design' },
+  { href: '#branding', label: 'Branding' },
   { href: '#graphic-design', label: 'Graphic Design' },
 ];
 
@@ -95,21 +98,18 @@ const photoCategories = [
   { title: 'Commercial Photography', href: '/projects/commercial-photography', dir: 'commercial-photography', cover: 'commercial-photography/04' },
 ];
 
-const graphicDesign = {
-  id: 'graphic-design',
-  label: 'Graphic Design',
-  sub: 'Identity · logo systems · print',
-  count: '2 pieces',
-  feature: {
-    href: '/projects/olivera',
-    title: 'Olivera — Branding Project',
-    meta: 'Graphic Design — 2024',
-    covers: ['olivera/01', 'olivera/02', 'olivera/03', 'olivera/04', 'olivera/05', 'olivera/06', 'olivera/07', 'olivera/08', 'olivera/09', 'olivera/10'],
-  },
-  browse: [
-    { title: 'Graphic Design Posters', href: '/projects/graphic-design-posters', cover: 'covers/graphic-design-posters' },
-  ],
-};
+// ---- Branding — same inline hover-expand category pattern as Industrial
+// Design and Photography; full-height single-column galleries with no
+// preview cap, so every slide is reachable by scrolling once opened. ----
+const brandingCategories = [
+  { title: 'Parallel', href: '/projects/parallel', dir: 'parallel-brand', cover: 'covers/parallel' },
+  { title: 'Next', href: '/projects/next-real-estate', dir: 'next-branding', cover: 'covers/next-branding' },
+  { title: 'Olivera', href: '/projects/olivera', dir: 'olivera', cover: 'covers/olivera' },
+];
+
+// ---- Graphic Design — closing category; a plain justified gallery, 3 across,
+// every poster shown (brand-identity pieces now live under Branding above). ----
+const graphicDesignCount = assetsIn('graphic-design-posters').length;
 
 // ---- Industrial Design — same inline hover-expand category pattern as
 // Photography, so each project's process/detail shots are previewable right
@@ -201,7 +201,28 @@ const industrialCategories = [
     </div>
   </section>
 
-  <DisciplineSection {...graphicDesign} />
+  <!-- Branding — same inline category pattern as Photography and Industrial
+       Design above; single-column galleries with no preview cap, so opening
+       a category is just a continuous vertical scroll through every slide. -->
+  <section class="discipline-block" id="branding">
+    <div class="discipline-head reveal">
+      <h2>Branding</h2>
+      <span class="count">Identity · logo systems · guidelines — {brandingCategories.length} projects</span>
+    </div>
+    <div class="container">
+      <PhotoCategoryRow categories={brandingCategories} galleryColumns={1} fullGallery />
+    </div>
+  </section>
+
+  <!-- Graphic Design — the closing category; a plain justified gallery
+       grid, 3 per row, every poster shown at once (no feature/browse split). -->
+  <section class="discipline-block" id="graphic-design">
+    <div class="discipline-head reveal">
+      <h2>Graphic Design</h2>
+      <span class="count">Posters · print layout — {graphicDesignCount} pieces</span>
+    </div>
+    <GalleryGrid dir="graphic-design-posters" columns={3} />
+  </section>
 
   <!-- Skillset strip — reinforces range in words, right before the close -->
   <section class="container">
