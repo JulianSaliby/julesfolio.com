@@ -9,6 +9,7 @@ interface MediaItem {
   covers?: string[]; // asset() paths — cycles as a slideshow
   video?: string; // public/ path (click-to-play)
   poster?: string; // public/ path; if omitted for a video, a frame is auto-previewed from the clip
+  previewTime?: number; // seconds into the clip to grab the auto-preview frame from (ignored if poster is set)
   meta?: string; // feature tile only
 }
 interface Props {
@@ -43,7 +44,7 @@ const featureImgs = featureCovers.map((c) => asset(c));
             {feature.poster ? (
               <img src={feature.poster} alt={`${feature.title} — work by Julian Saliby`} loading="lazy" />
             ) : (
-              <video class="preview" muted preload="metadata" playsinline src={`${feature.video}#t=0.5`}></video>
+              <video class="preview" muted preload="metadata" playsinline src={`${feature.video}#t=${feature.previewTime ?? 0.5}`}></video>
             )}
             <span class="play-badge" aria-hidden="true">▶</span>
           </button>
@@ -91,7 +92,7 @@ const featureImgs = featureCovers.map((c) => asset(c));
                 {it.poster ? (
                   <img src={it.poster} alt={it.title} loading="lazy" />
                 ) : (
-                  <video class="preview" muted preload="metadata" playsinline src={`${it.video}#t=0.5`}></video>
+                  <video class="preview" muted preload="metadata" playsinline src={`${it.video}#t=${it.previewTime ?? 0.5}`}></video>
                 )}
                 <span class="play-badge small" aria-hidden="true">▶</span>
               </button>

@@ -3,6 +3,7 @@ interface ReelItem {
   title: string;
   video: string; // public/ path
   poster?: string; // public/ path; if omitted, a frame is auto-previewed from the clip
+  previewTime?: number; // seconds into the clip to grab the auto-preview frame from (ignored if poster is set)
 }
 interface Props {
   items: ReelItem[];
@@ -24,7 +25,7 @@ const first = items[0];
         {it.poster ? (
           <img src={it.poster} alt={it.title} loading="lazy" />
         ) : (
-          <video class="preview" muted preload="metadata" playsinline src={`${it.video}#t=0.5`}></video>
+          <video class="preview" muted preload="metadata" playsinline src={`${it.video}#t=${it.previewTime ?? 0.5}`}></video>
         )}
         <span class="play-badge small" aria-hidden="true">▶</span>
       </button>
@@ -37,7 +38,7 @@ const first = items[0];
         {first.poster ? (
           <img src={first.poster} alt={first.title} />
         ) : (
-          <video class="preview" muted preload="metadata" playsinline src={`${first.video}#t=0.5`}></video>
+          <video class="preview" muted preload="metadata" playsinline src={`${first.video}#t=${first.previewTime ?? 0.5}`}></video>
         )}
         <span class="play-badge" aria-hidden="true">▶</span>
       </button>
