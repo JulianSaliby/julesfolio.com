@@ -7,6 +7,9 @@ interface FlagshipItem {
   title: string;
   meta: string;
   cover: string; // asset() path
+  logo?: string; // public/ path — small brand mark shown as a permanent top-right badge
+  logoAlt?: string;
+  logoLabel?: string; // text shown to the left of the logo in the badge
 }
 interface Props {
   items: FlagshipItem[];
@@ -20,11 +23,18 @@ const { items } = Astro.props;
       <figure class="flagship-media">
         <Image src={asset(it.cover)} alt={`${it.title} — work by Julian Saliby`} widths={[600, 1000, 1400]} sizes="(max-width: 820px) 100vw, 30vw" />
       </figure>
-      <span class="case-flag">Case study</span>
+      {it.logo && (
+        <span class="ai-badge">
+          {it.logoLabel && <span class="ai-badge-label">{it.logoLabel}</span>}
+          <img src={it.logo} alt={it.logoAlt ?? ''} class="ai-badge-logo" />
+        </span>
+      )}
       <div class="ph-tag">
         <strong>{it.title}</strong>
-        <span class="meta flagship-meta">{it.meta}</span>
-        <span class="cta">View case study →</span>
+        <span class="meta flagship-meta">
+          {it.meta}
+        </span>
+        <span class="cta">View project →</span>
       </div>
     </a>
   ))}
@@ -56,11 +66,18 @@ const { items } = Astro.props;
   }
   .flagship:hover .flagship-media :global(img) { transform: scale(1.04); }
 
-  .case-flag {
+  .ai-badge {
     position: absolute; top: 0.75rem; right: 0.75rem; z-index: 3;
+    display: flex; align-items: center; gap: 0.4rem;
+    background: rgba(0,0,0,0.55); border: 1px solid var(--hairline);
+    border-radius: 20px; padding: 0.3rem 0.65rem 0.3rem 0.75rem;
+  }
+  .ai-badge-label {
     font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--text); background: rgba(0,0,0,0.5); border: 1px solid var(--hairline);
-    padding: 0.2rem 0.5rem; border-radius: 20px;
+    color: var(--text); white-space: nowrap;
+  }
+  .ai-badge-logo {
+    display: block; width: 1.1rem; height: 1.1rem; border-radius: 0.25rem; flex: none;
   }
 
   .ph-tag {
@@ -79,7 +96,6 @@ const { items } = Astro.props;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .flagship:hover .ph-tag strong { color: var(--accent); }
   .flagship-meta, .cta {
     display: block;
     opacity: 0;
@@ -87,7 +103,7 @@ const { items } = Astro.props;
     transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
     white-space: nowrap;
   }
-  .flagship-meta { margin-top: 0.35rem; }
+  .flagship-meta { margin-top: 0.35rem; display: flex; align-items: center; gap: 0.4rem; }
   .cta {
     margin-top: 0.4rem;
     font-size: 0.72rem;

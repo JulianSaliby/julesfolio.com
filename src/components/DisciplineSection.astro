@@ -12,6 +12,12 @@ interface MediaItem {
   previewTime?: number; // seconds into the clip to grab the auto-preview frame from (ignored if poster is set)
   meta?: string; // feature tile only
 }
+interface Skill {
+  name: string;
+  icon?: string; // filename (no ext) of a brand/skill SVG in src/assets/tool-icons/
+  color?: string; // muted brand tint (ignored for multicolor icons & img chips)
+  img?: string; // public/ path — real app icon/logo, shown as-is
+}
 interface Props {
   id: string;
   label: string;
@@ -19,20 +25,45 @@ interface Props {
   count: string;
   feature: MediaItem;
   browse: MediaItem[];
+  /** Programs & skills shown as a row of chips next to the section title. */
+  skills?: Skill[];
   /** When true, clicking a browse video loads & plays it in the feature frame above instead of playing inline in place. */
   videoBrowsePlaysInFeature?: boolean;
   /** Show each browse tile's title caption. Off for a plain thumbnail grid. */
   showBrowseTitles?: boolean;
 }
-const { id, label, sub, count, feature, browse, videoBrowsePlaysInFeature = false, showBrowseTitles = true } = Astro.props;
+const { id, label, sub, count, feature, browse, skills, videoBrowsePlaysInFeature = false, showBrowseTitles = true } = Astro.props;
 
 const featureCovers = feature.covers ?? (feature.cover ? [feature.cover] : []);
 const featureImgs = featureCovers.map((c) => asset(c));
+
+// Same inline-svg pattern as ToolStack.astro / index.astro's skills rows.
+const skillIcons: Record<string, string> = import.meta.glob('../assets/tool-icons/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const skillIconSvg = (name?: string) => name && skillIcons[`../assets/tool-icons/${name}.svg`];
 ---
 
 <section class="discipline-block" id={id}>
   <div class="discipline-head reveal">
-    <h2>{label}</h2>
+    <div class="head-title">
+      <h2>{label}</h2>
+      {skills && (
+        <ul class="skills-row" aria-label="Programs and skills used">
+          {skills.map((s) => (
+            <li class="skill-chip" title={s.name}>
+              {s.img ? (
+                <img src={s.img} alt={s.name} loading="lazy" />
+              ) : (
+                <span class="skill-chip-icon" style={s.color ? `color:${s.color}` : undefined} set:html={skillIconSvg(s.icon)} />
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
     <span class="count">{sub} — {count}</span>
   </div>
 
@@ -65,7 +96,6 @@ const featureImgs = featureCovers.map((c) => asset(c));
           </div>
         )}
       </div>
-      <span class="case-flag">Case study</span>
       <div class="ph-tag">
         <strong class="feature-title">{feature.title}</strong>
         <span class="feature-meta">{feature.meta ?? ''}</span>
@@ -125,6 +155,18 @@ const featureImgs = featureCovers.map((c) => asset(c));
   }
   .discipline-head h2 { font-size: clamp(1.3rem, 2.4vw, 1.9rem); font-weight: 600; letter-spacing: -0.01em; }
   .discipline-head .count { font-size: var(--text-xs); color: var(--text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; }
+  .head-title { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
+
+  .skills-row { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .skill-chip {
+    display: grid; place-items: center;
+    width: 1.9rem; height: 1.9rem; padding: 0.3rem;
+    border-radius: 0.4rem; background: var(--bg-elevated); border: 1px solid var(--hairline);
+    overflow: hidden;
+  }
+  .skill-chip img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 0.2rem; }
+  .skill-chip-icon { display: grid; place-items: center; width: 100%; height: 100%; color: var(--text-secondary); }
+  .skill-chip-icon :global(svg) { width: 100%; height: 100%; object-fit: contain; }
 
   /* Feature tile — always a 16:9 frame, regardless of the source image/video's
      native ratio; content crops to fill via object-fit so nothing distorts. */
@@ -212,14 +254,13 @@ const featureImgs = featureCovers.map((c) => asset(c));
   }
   .play-badge.small { width: 34px; height: 34px; font-size: 0.65rem; }
 
-  .case-flag, .browse-flag {
+  .browse-flag {
     position: absolute; top: 0.6rem; right: 0.6rem; z-index: 3;
     font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
     padding: 0.2rem 0.5rem; border-radius: 20px;
     pointer-events: none;
+    color: var(--text-tertiary);
   }
-  .case-flag { color: var(--text); background: rgba(0,0,0,0.5); border: 1px solid var(--hairline); }
-  .browse-flag { color: var(--text-tertiary); }
 
   .ph-tag {
     position: absolute; inset-inline: 0; bottom: 0; z-index: 2;

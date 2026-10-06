@@ -8,9 +8,19 @@ import PhotoCategoryRow from '../components/blocks/PhotoCategoryRow.astro';
 import GalleryGrid from '../components/blocks/GalleryGrid.astro';
 import { assetsIn } from '../lib/assets';
 
+// Real brand SVGs for the Industrial Design skills row (same inline-svg
+// pattern as ToolStack.astro); PNG app icons for brands with no suitable
+// monochrome mark live under public/media/logos/tools instead.
+const skillIcons: Record<string, string> = import.meta.glob('../assets/tool-icons/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const skillIconSvg = (name?: string) => name && skillIcons[`../assets/tool-icons/${name}.svg`];
+
 const sectionNavItems = [
   { href: '#home', label: 'Home' },
-  { href: '#work', label: 'Flagship Work' },
+  { href: '#work', label: 'Multidisciplinary Projects' },
   { href: '#videography', label: 'Videography' },
   { href: '#short-form-reels', label: 'Short Form Reels' },
   { href: '#photography', label: 'Photography' },
@@ -19,7 +29,7 @@ const sectionNavItems = [
   { href: '#graphic-design', label: 'Graphic Design' },
 ];
 
-// ---- Flagship row — the 4 headline case studies, shown once, up top ----
+// ---- Flagship row — the 4 headline multidisciplinary projects, shown once, up top ----
 const flagships = [
   {
     href: '/projects/next-real-estate',
@@ -36,12 +46,15 @@ const flagships = [
   {
     href: '/projects/janera',
     title: 'Janera',
-    meta: 'AI-Generated Commercial Spots — 2026',
+    meta: 'AI Generated — 2026',
+    logo: '/media/logos/higgsfield.png',
+    logoAlt: 'Higgsfield AI',
+    logoLabel: 'AI Generated',
     cover: 'covers/janera',
   },
   {
     href: '/projects/icare',
-    title: 'iCare — Eye-Care Capstone',
+    title: 'Eye Care — Capstone',
     meta: 'Industrial Design · Full Process Book — 2024',
     cover: 'covers/eye-care-capstone',
   },
@@ -72,6 +85,10 @@ const videography = {
     { title: "Marcello's — TV Spot", video: '/media/videography/marcellos-tv.mp4', previewTime: 28 },
   ],
 };
+const videographySkills = [
+  { name: 'Video Camera', icon: 'video' },
+  { name: 'Adobe Premiere Pro', icon: 'premierepro', color: '#b1b1f5' },
+];
 
 // ---- Short Form Reels — its own category, sitting between Videography and
 // Photography: vertical (9:16) social edits, distinct enough from the 16:9
@@ -86,6 +103,11 @@ const shortFormReels = [
   { title: 'Dennison — Ad', video: '/media/short-form-reels/dennison-ad.mp4', previewTime: 14 },
   { title: 'MyHookah Giveaway', video: '/media/short-form-reels/myhookah-giveaway.mp4', poster: '/media/short-form-reels-posters/myhookah-giveaway.jpg' },
 ];
+const shortFormReelsSkills = [
+  { name: 'Video Camera', icon: 'video' },
+  { name: 'Adobe Premiere Pro', icon: 'premierepro', color: '#b1b1f5' },
+  { name: 'Higgsfield AI', img: '/media/logos/higgsfield.png' },
+];
 
 // ---- Photography — a horizontal row of categories, each with an inline,
 // collapsible drop-down gallery instead of only being reachable by clicking
@@ -98,6 +120,11 @@ const photoCategories = [
   { title: 'Vandal Gaming Mouse', href: '/projects/vandal-gaming-mouse', dir: 'vandal-gaming-mouse', cover: 'vandal-gaming-mouse/02' },
   { title: 'Commercial Photography', href: '/projects/commercial-photography', dir: 'commercial-photography', cover: 'commercial-photography/04' },
 ];
+const photographySkills = [
+  { name: 'Camera', icon: 'camera' },
+  { name: 'Adobe Lightroom', icon: 'lightroom', color: '#7cc4f5' },
+  { name: 'Adobe Photoshop', icon: 'photoshop', color: '#7cc4f5' },
+];
 
 // ---- Branding — same inline hover-expand category pattern as Industrial
 // Design and Photography; full-height single-column galleries with no
@@ -107,21 +134,45 @@ const brandingCategories = [
   { title: 'Next', href: '/projects/next-real-estate', dir: 'next-branding', cover: 'covers/next-branding' },
   { title: 'Olivera', href: '/projects/olivera', dir: 'olivera', cover: 'covers/olivera' },
 ];
+const brandingSkills = [
+  { name: 'Figma', img: '/media/logos/tools/figma.svg' },
+  { name: 'Adobe Photoshop', icon: 'photoshop', color: '#7cc4f5' },
+  { name: 'Procreate', img: '/media/logos/tools/procreate.png' },
+  { name: 'Adobe Illustrator', icon: 'illustrator', color: '#f5b57c' },
+  { name: 'Camera', icon: 'camera' },
+];
 
 // ---- Graphic Design — closing category; a plain justified gallery, 3 across,
 // every poster shown (brand-identity pieces now live under Branding above). ----
 const graphicDesignCount = assetsIn('graphic-design-posters').length;
+const graphicDesignSkills = [
+  { name: 'Sketching', icon: 'pencil' },
+  { name: 'Adobe Photoshop', icon: 'photoshop', color: '#7cc4f5' },
+];
 
 // ---- Industrial Design — same inline hover-expand category pattern as
 // Photography, so each project's process/detail shots are previewable right
 // on the homepage instead of only reachable via its own project page. ----
 const industrialCategories = [
-  { title: 'iCare — Eye-Care Capstone', href: '/projects/icare', dir: 'icare-book', cover: 'covers/eye-care-capstone', viewer: 'booklet' },
+  { title: 'Eye Care — Capstone', href: '/projects/icare', dir: 'icare-book', cover: 'covers/eye-care-capstone', viewer: 'booklet' },
   { title: 'Balco Furniture Piece', href: '/projects/furniture', dir: 'furniture', cover: 'covers/furniture' },
   { title: 'Inferno Fire Extinguisher', href: '/projects/inferno-fire-extinguisher', dir: 'inferno-fire-extinguisher', cover: 'covers/inferno-fire-extinguisher' },
   { title: 'Product Brand Extension', href: '/projects/product-brand-extension', dir: 'product-brand-extension', cover: 'covers/product-brand-extension' },
   { title: 'Portable Tool Belt', href: '/projects/portable-tool-belt', dir: 'portable-tool-belt', cover: 'covers/portable-tool-belt' },
   { title: 'Walkie Talkie Redesign', href: '/projects/walkie-talkie-redesign', dir: 'walkie-talkie-redesign', cover: 'covers/walkie-talkie-redesign' },
+];
+const industrialSkills = [
+  { name: 'SolidWorks', img: '/media/logos/tools/solidworks.png' },
+  { name: 'Procreate', img: '/media/logos/tools/procreate.png' },
+  { name: 'Shapr3D', img: '/media/logos/tools/shapr3d.png' },
+  { name: 'Adobe Premiere Pro', icon: 'premierepro', color: '#b1b1f5' },
+  { name: 'Adobe Photoshop', icon: 'photoshop', color: '#7cc4f5' },
+  { name: 'Adobe Illustrator', icon: 'illustrator', color: '#f5b57c' },
+  { name: 'Figma', img: '/media/logos/tools/figma.svg' },
+  { name: 'KeyShot', img: '/media/logos/tools/keyshot.png' },
+  { name: 'Sketching', icon: 'pencil-ruler' },
+  { name: 'Model Making', icon: 'box' },
+  { name: '3D Printing', icon: 'printer' },
 ];
 ---
 
@@ -155,21 +206,34 @@ const industrialCategories = [
     <div class="hero-cue" aria-hidden="true"><span>Scroll</span></div>
   </section>
 
-  <!-- Flagship case studies — one horizontal row, all 4 visible at once -->
+  <!-- Multidisciplinary projects — one horizontal row, all 4 visible at once -->
   <section id="work" class="container section">
-    <p class="meta feat-label">Flagship Work</p>
+    <p class="meta feat-label">Multidisciplinary Projects</p>
     <FlagshipRow items={flagships} />
   </section>
 
   <!-- Full portfolio, one continuous scroll -->
-  <DisciplineSection {...videography} videoBrowsePlaysInFeature showBrowseTitles={false} />
+  <DisciplineSection {...videography} skills={videographySkills} videoBrowsePlaysInFeature showBrowseTitles={false} />
 
   <!-- Short Form Reels — its own category between Videography and Photography.
        Vertical (9:16) clips don't fit the 16:9 discipline-section frame, so
        this gets its own picker layout instead: tall hero + a grid to choose from. -->
   <section class="discipline-block" id="short-form-reels">
     <div class="discipline-head reveal">
-      <h2>Short Form Reels</h2>
+      <div class="head-title">
+        <h2>Short Form Reels</h2>
+        <ul class="skills-row" aria-label="Programs and skills used">
+          {shortFormReelsSkills.map((s) => (
+            <li class="skill-chip" title={s.name}>
+              {s.img ? (
+                <img src={s.img} alt={s.name} loading="lazy" />
+              ) : (
+                <span class="skill-chip-icon" style={s.color ? `color:${s.color}` : undefined} set:html={skillIconSvg(s.icon)} />
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
       <span class="count">Vertical social edits · Reels · TikTok · Shorts — {shortFormReels.length} pieces</span>
     </div>
     <div class="container">
@@ -182,7 +246,20 @@ const industrialCategories = [
        DisciplineSection layout. -->
   <section class="discipline-block" id="photography">
     <div class="discipline-head reveal">
-      <h2>Photography</h2>
+      <div class="head-title">
+        <h2>Photography</h2>
+        <ul class="skills-row" aria-label="Programs and skills used">
+          {photographySkills.map((s) => (
+            <li class="skill-chip" title={s.name}>
+              {s.img ? (
+                <img src={s.img} alt={s.name} loading="lazy" />
+              ) : (
+                <span class="skill-chip-icon" style={s.color ? `color:${s.color}` : undefined} set:html={skillIconSvg(s.icon)} />
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
       <span class="count">Automotive · architectural · commercial — {photoCategories.length} categories</span>
     </div>
     <div class="container">
@@ -194,7 +271,20 @@ const industrialCategories = [
        gallery per project, same pattern as Photography above. -->
   <section class="discipline-block" id="industrial-design">
     <div class="discipline-head reveal">
-      <h2>Industrial Design</h2>
+      <div class="head-title">
+        <h2>Industrial Design</h2>
+        <ul class="skills-row" aria-label="Programs and skills used">
+          {industrialSkills.map((s) => (
+            <li class="skill-chip" title={s.name}>
+              {s.img ? (
+                <img src={s.img} alt={s.name} loading="lazy" />
+              ) : (
+                <span class="skill-chip-icon" style={s.color ? `color:${s.color}` : undefined} set:html={skillIconSvg(s.icon)} />
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
       <span class="count">Products · furniture · capstone — {industrialCategories.length} projects</span>
     </div>
     <div class="container">
@@ -207,7 +297,20 @@ const industrialCategories = [
        a category is just a continuous vertical scroll through every slide. -->
   <section class="discipline-block" id="branding">
     <div class="discipline-head reveal">
-      <h2>Branding</h2>
+      <div class="head-title">
+        <h2>Branding</h2>
+        <ul class="skills-row" aria-label="Programs and skills used">
+          {brandingSkills.map((s) => (
+            <li class="skill-chip" title={s.name}>
+              {s.img ? (
+                <img src={s.img} alt={s.name} loading="lazy" />
+              ) : (
+                <span class="skill-chip-icon" style={s.color ? `color:${s.color}` : undefined} set:html={skillIconSvg(s.icon)} />
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
       <span class="count">Identity · logo systems · guidelines — {brandingCategories.length} projects</span>
     </div>
     <div class="container">
@@ -219,7 +322,21 @@ const industrialCategories = [
        grid, 3 per row, every poster shown at once (no feature/browse split). -->
   <section class="discipline-block" id="graphic-design">
     <div class="discipline-head reveal">
-      <h2>Graphic Design</h2>
+      <div class="head-title">
+        <h2>Graphic Design</h2>
+        <ul class="skills-row" aria-label="Programs and skills used">
+          {graphicDesignSkills.map((s) => (
+            <li class="skill-chip" title={s.name}>
+              {s.img ? (
+                <img src={s.img} alt={s.name} loading="lazy" />
+              ) : (
+                <span class="skill-chip-icon" style={s.color ? `color:${s.color}` : undefined} set:html={skillIconSvg(s.icon)} />
+              )}
+            </li>
+          ))}
+        </ul>
+        <span class="ai-disclosure">No AI generated or aided imagery</span>
+      </div>
       <span class="count">Posters · print layout — {graphicDesignCount} pieces</span>
     </div>
     <GalleryGrid dir="graphic-design-posters" columns={3} />
@@ -328,6 +445,24 @@ const industrialCategories = [
   }
   .discipline-head h2 { font-size: clamp(1.3rem, 2.4vw, 1.9rem); font-weight: 600; letter-spacing: -0.01em; }
   .discipline-head .count { font-size: var(--text-xs); color: var(--text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; }
+  .head-title { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
+
+  .ai-disclosure {
+    font-size: var(--text-xs); color: var(--text-tertiary); letter-spacing: 0.02em;
+    border: 1px solid var(--hairline); border-radius: 20px; padding: 0.2rem 0.7rem;
+    white-space: nowrap;
+  }
+
+  .skills-row { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .skill-chip {
+    display: grid; place-items: center;
+    width: 1.9rem; height: 1.9rem; padding: 0.3rem;
+    border-radius: 0.4rem; background: var(--bg-elevated); border: 1px solid var(--hairline);
+    overflow: hidden;
+  }
+  .skill-chip img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 0.2rem; }
+  .skill-chip-icon { display: grid; place-items: center; width: 100%; height: 100%; color: var(--text-secondary); }
+  .skill-chip-icon :global(svg) { width: 100%; height: 100%; object-fit: contain; }
 
   /* ---- Skillset strip ---- */
   .skill-strip {
